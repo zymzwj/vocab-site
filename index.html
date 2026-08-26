@@ -823,27 +823,46 @@ if (window.speechSynthesis) {
   speechSynthesis.onvoiceschanged = pickBestVoice;
 }
 
+/* ── Audio playback (AudioContext for mobile compatibility) ── */
+let audioCtx = null;
+let currentSource = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
 /* ── Speak function ── */
 async function speak(text, e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   const btn = e && e.currentTarget;
 
+  if (currentSource) {
+    try { currentSource.stop(); } catch(_) {}
+    currentSource = null;
+  }
   if (currentPlayer) {
     currentPlayer.pause();
     currentPlayer = null;
   }
 
+  const ctx = getAudioCtx();
+
   if (kokoroReady && kokoroTTS) {
     if (btn) btn.classList.add('speaking');
     try {
-      const audio = await kokoroTTS.generate(text, { voice: kokoroVoice });
-      const blob = audio.toBlob();
-      const url = URL.createObjectURL(blob);
-      const player = new Audio(url);
-      currentPlayer = player;
-      player.onended = () => { URL.revokeObjectURL(url); if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
-      player.onerror = () => { URL.revokeObjectURL(url); if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
-      player.play();
+      const result = await kokoroTTS.generate(text, { voice: kokoroVoice });
+      const pcm = result.audio;
+      const sr = result.sampling_rate;
+      const buf = ctx.createBuffer(1, pcm.length, sr);
+      buf.copyToChannel(pcm, 0);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      currentSource = src;
+      src.onended = () => { if (btn) btn.classList.remove('speaking'); currentSource = null; };
+      src.start();
     } catch(err) {
       console.warn('Kokoro speak error:', err);
       if (btn) btn.classList.remove('speaking');
