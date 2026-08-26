@@ -853,12 +853,11 @@ async function speak(text, e) {
     if (btn) btn.classList.add('speaking');
     try {
       const result = await kokoroTTS.generate(text, { voice: kokoroVoice });
-      const pcm = result.audio;
-      const sr = result.sampling_rate;
-      const buf = ctx.createBuffer(1, pcm.length, sr);
-      buf.copyToChannel(pcm, 0);
+      const blob = result.toBlob();
+      const arrayBuf = await blob.arrayBuffer();
+      const audioBuf = await ctx.decodeAudioData(arrayBuf);
       const src = ctx.createBufferSource();
-      src.buffer = buf;
+      src.buffer = audioBuf;
       src.connect(ctx.destination);
       currentSource = src;
       src.onended = () => { if (btn) btn.classList.remove('speaking'); currentSource = null; };
@@ -866,6 +865,7 @@ async function speak(text, e) {
     } catch(err) {
       console.warn('Kokoro speak error:', err);
       if (btn) btn.classList.remove('speaking');
+      document.getElementById('voice-status').textContent = 'Error: ' + (err.message || err);
       speakBrowser(text, btn);
     }
   } else {
