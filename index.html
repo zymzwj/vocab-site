@@ -867,7 +867,12 @@ async function speak(text, e) {
     const st = document.getElementById('voice-status');
     st.innerHTML = '<span class="dot" style="background:#f0ad4e"></span>生成中...';
     try {
-      const result = await kokoroTTS.generate(text, { voice: kokoroVoice });
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 15000));
+      const result = await Promise.race([
+        kokoroTTS.generate(text, { voice: kokoroVoice }),
+        timeout
+      ]);
       const samples = result.audio;
       const sr = result.sampling_rate || 24000;
       const audioBuf = ctx.createBuffer(1, samples.length, sr);
@@ -880,9 +885,14 @@ async function speak(text, e) {
       src.start();
       st.innerHTML = '<span class="dot"></span>AI 语音就绪';
     } catch(err) {
-      console.warn('Kokoro speak error:', err);
       if (btn) btn.classList.remove('speaking');
-      st.innerHTML = '<span class="dot" style="background:#d9534f"></span>Error: ' + (err.message || err);
+      if (err.message === 'timeout') {
+        st.innerHTML = '<span class="dot" style="background:#f0ad4e"></span>手机端较慢，已切换浏览器语音';
+        kokoroReady = false;
+        document.getElementById('voice-select').style.display = 'none';
+      } else {
+        st.innerHTML = '<span class="dot" style="background:#d9534f"></span>Error: ' + (err.message || err);
+      }
       speakBrowser(text, btn);
     }
   } else {
