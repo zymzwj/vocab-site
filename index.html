@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生词本</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #F4F2ED;
+  --surface: #FFFFFF;
+  --surface-hover: #FAFAF7;
+  --accent: #3A7D6E;
+  --accent-soft: #E4F0EC;
+  --accent-hover: #2E6459;
+  --text: #1C1917;
+  --text-sec: #6B6560;
+  --border: #E0DDD7;
+  --shadow: rgba(28, 25, 23, 0.06);
+  --shadow-md: rgba(28, 25, 23, 0.1);
+  --known-bg: #E4F0EC;
+  --known-border: #3A7D6E;
+  --radius: 10px;
+  --font-display: 'Crimson Pro', 'Songti SC', 'SimSun', serif;
+  --font-ui: 'Outfit', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17161A;
+    --surface: #23222A;
+    --surface-hover: #2C2B33;
+    --accent: #5EC4AD;
+    --accent-soft: #1C2E29;
+    --accent-hover: #7DD4C0;
+    --text: #E4E2DD;
+    --text-sec: #9A958F;
+    --border: #38363D;
+    --shadow: rgba(0,0,0,0.15);
+    --shadow-md: rgba(0,0,0,0.25);
+    --known-bg: #1C2E29;
+    --known-border: #5EC4AD;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17161A;
+  --surface: #23222A;
+  --surface-hover: #2C2B33;
+  --accent: #5EC4AD;
+  --accent-soft: #1C2E29;
+  --accent-hover: #7DD4C0;
+  --text: #E4E2DD;
+  --text-sec: #9A958F;
+  --border: #38363D;
+  --shadow: rgba(0,0,0,0.15);
+  --shadow-md: rgba(0,0,0,0.25);
+  --known-bg: #1C2E29;
+  --known-border: #5EC4AD;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+header {
+  padding: 32px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+}
+.title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.stats {
+  font-size: 13px;
+  color: var(--text-sec);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.stats .mastered-count {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.mode-toggle {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.mode-btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: none;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-ui);
+}
+.mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.search-row {
+  margin-top: 16px;
+  position: relative;
+}
+.search-row svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-sec);
+  pointer-events: none;
+}
+#search {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--font-ui);
+  outline: none;
+  transition: border-color 0.2s;
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--text-sec); }
+
+.voice-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-sec);
+}
+.voice-bar select {
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--font-ui);
+  outline: none;
+}
+.voice-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+.voice-status.loading {
+  background: #FFF3CD;
+  color: #856404;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .voice-status.loading {
+    background: #3D3520;
+    color: #F0D060;
+  }
+}
+:root[data-theme="dark"] .voice-status.loading {
+  background: #3D3520;
+  color: #F0D060;
+}
+.voice-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.voice-status.loading .dot {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.pills {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  padding-bottom: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pills::-webkit-scrollbar { display: none; }
+.pill {
+  white-space: nowrap;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sec);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-ui);
+  flex-shrink: 0;
+}
+.pill:hover { border-color: var(--accent); color: var(--accent); }
+.pill.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  padding-bottom: 40px;
+}
+
+.card {
+  perspective: 800px;
+  height: 180px;
+  cursor: pointer;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px var(--shadow);
+  transition: box-shadow 0.2s;
+  overflow: hidden;
+}
+.card:hover .card-face { box-shadow: 0 4px 12px var(--shadow-md); }
+
+.card-back {
+  transform: rotateY(180deg);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.card.known .card-front {
+  border-color: var(--known-border);
+  background: var(--known-bg);
+}
+.card.known .card-front::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.card-cat {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.card-en {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.card-ph {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-sec);
+  margin-top: 4px;
+}
+.card-zh {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  flex: 1;
+  overflow-y: auto;
+}
+.card-zh::-webkit-scrollbar { width: 3px; }
+.card-zh::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.card-ex {
+  font-size: 12.5px;
+  color: var(--text-sec);
+  margin-top: 8px;
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.card-back .card-ex { border-color: rgba(0,0,0,0.1); }
+.card-hint {
+  font-size: 11px;
+  color: var(--text-sec);
+  text-align: center;
+  margin-top: auto;
+  opacity: 0.7;
+}
+
+.speak-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  z-index: 2;
+}
+.speak-btn:hover { border-color: var(--accent); color: var(--accent); }
+.speak-btn.speaking { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.study-card .speak-btn { width: 38px; height: 38px; bottom: 16px; right: 16px; }
+.card-back .speak-btn { border-color: rgba(0,0,0,0.15); }
+.card-back .speak-btn:hover { border-color: var(--accent); }
+
+.study-view { display: none; padding-bottom: 40px; }
+.study-view.active { display: block; }
+.browse-view.active { display: grid; }
+.browse-view { display: none; }
+
+.study-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+.study-progress-text {
+  font-size: 14px;
+  color: var(--text-sec);
+  font-variant-numeric: tabular-nums;
+}
+.study-progress-text strong { color: var(--accent); font-weight: 600; }
+.study-filter {
+  display: flex;
+  gap: 6px;
+}
+.study-filter-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-sec);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: all 0.15s;
+}
+.study-filter-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.study-card-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+.study-card {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 480px;
+  height: 300px;
+  cursor: pointer;
+}
+.study-card .card-inner { height: 100%; }
+.study-card .card-face {
+  padding: 32px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.study-card .card-en { font-size: 32px; justify-content: center; }
+.study-card .card-ph { font-size: 16px; }
+.study-card .card-zh { font-size: 18px; text-align: center; }
+.study-card .card-ex { font-size: 14px; text-align: center; }
+.study-card .card-cat { font-size: 12px; }
+
+.study-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-ui);
+}
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn:disabled:hover { border-color: var(--border); color: var(--text-sec); }
+
+.action-btns {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.action-btn {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-ui);
+}
+.action-btn:hover { border-color: var(--accent); }
+.action-btn.got-it {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.action-btn.got-it:hover { background: var(--accent-hover); }
+.shuffle-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-sec);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: all 0.15s;
+}
+.shuffle-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.progress-bar-wrap {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-sec);
+  font-size: 15px;
+  grid-column: 1 / -1;
+}
+
+.kbd-hint {
+  text-align: center;
+  color: var(--text-sec);
+  font-size: 12px;
+  margin-top: 20px;
+  opacity: 0.6;
+}
+kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  header { padding: 20px 0 0; }
+  h1 { font-size: 22px; }
+  .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { height: 150px; }
+  .card-en { font-size: 17px; }
+  .card-face { padding: 14px; }
+  .study-card { height: 260px; }
+  .study-card .card-en { font-size: 26px; }
+  .study-card .card-zh { font-size: 16px; }
+  .kbd-hint { display: none; }
+}
+@media (max-width: 380px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .card { height: 140px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-inner { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="title-row">
+      <div>
+        <h1>生词本</h1>
+        <div class="stats">
+          <span id="total-count"></span>
+          <span>已掌握 <span class="mastered-count" id="mastered-count">0</span></span>
+        </div>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="browse">浏览</button>
+        <button class="mode-btn" data-mode="study">学习</button>
+      </div>
+    </div>
+    <div class="search-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="search" placeholder="搜索单词或释义...">
+    </div>
+    <div class="voice-bar">
+      <span>语音：</span>
+      <select id="voice-select">
+        <option value="af_heart">Heart (美式女声)</option>
+        <option value="af_bella">Bella (美式女声)</option>
+        <option value="af_nova">Nova (美式女声)</option>
+        <option value="af_sarah">Sarah (美式女声)</option>
+        <option value="bf_emma">Emma (英式女声)</option>
+      </select>
+      <span class="voice-status loading" id="voice-status"><span class="dot"></span>AI 语音加载中</span>
+    </div>
+    <div class="pills" id="pills"></div>
+  </header>
+
+  <main>
+    <div class="card-grid browse-view active" id="browse-view"></div>
+
+    <div class="study-view" id="study-view">
+      <div class="study-header">
+        <span class="study-progress-text" id="study-progress"></span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="study-filter">
+            <button class="study-filter-btn active" data-filter="all">全部</button>
+            <button class="study-filter-btn" data-filter="learning">待学</button>
+          </div>
+          <button class="shuffle-btn" id="shuffle-btn">打乱</button>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+
+      <div class="study-card-wrap">
+        <div class="study-card" id="study-card">
+          <div class="card-inner">
+            <div class="card-face card-front" id="s-front"></div>
+            <div class="card-face card-back" id="s-back"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="study-nav">
+        <button class="nav-btn" id="prev-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="action-btns">
+          <button class="action-btn again-btn" id="again-btn">再看看</button>
+          <button class="action-btn got-it" id="gotit-btn">掌握了</button>
+        </div>
+        <button class="nav-btn" id="next-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="kbd-hint">
+        <kbd>Space</kbd> 翻转 &nbsp; <kbd>&larr;</kbd> <kbd>&rarr;</kbd> 切换 &nbsp; <kbd>S</kbd> 朗读 &nbsp; <kbd>1</kbd> 再看看 &nbsp; <kbd>2</kbd> 掌握了
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const VOCAB = [
+  {en:"geographical points",zh:"地理位置",cat:"网络"},
+  {en:"twisted pair",zh:"双绞线",cat:"网络"},
+  {en:"coaxial cable",zh:"同轴电缆",cat:"网络"},
+  {en:"optical fiber",zh:"光纤",cat:"网络"},
+  {en:"congestion",ph:"/kənˈdʒɛstʃən/",zh:"拥塞",cat:"网络"},
+  {en:"bandwidth bottleneck",zh:"带宽瓶颈",cat:"网络"},
+  {en:"long-haul",ph:"/lɔːŋhɔːl/",zh:"长途的",cat:"网络"},
+  {en:"bursty data",zh:"突发性数据",cat:"网络"},
+  {en:"multiplexing",ph:"/ˌmʌltɪˈplɛksɪŋ/",zh:"复用",cat:"网络"},
+  {en:"framing",ph:"/ˈfreɪmɪŋ/",zh:"成帧",cat:"网络"},
+
+  {en:"dedicated",ph:"/ˈdɛdɪkeɪtɪd/",zh:"专门的、专用的",ex:"a dedicated lane for buses — 公交专用道\na dedicated server — 专用服务器\ndedicated time — 专门留出的时间",cat:"学术"},
+  {en:"empirical",ph:"/ɪmˈpɪrɪkəl/",zh:"经验的、实证的\n反义词：theoretical（理论的）",ex:"empirical evidence — 实证证据\nan empirical study — 实证研究",cat:"学术"},
+  {en:"incorporate",ph:"/ɪnˈkɔːrpəreɪt/",zh:"把……纳入、包含、融合\n搭配 incorporate A into B",ex:"We incorporated user feedback into the design.\nThe new version incorporates several bug fixes.",cat:"学术"},
+  {en:"culminate",ph:"/ˈkʌlmɪneɪt/",zh:"以……告终、达到顶点\n搭配 culminate in / with",ex:"The course will culminate with a final project presentation.",cat:"学术"},
+  {en:"robust",ph:"/roʊˈbʌst/",zh:"稳健的、健壮的、经得起考验的",ex:"a robust system — 健壮的系统\nrobust findings — 可靠的研究结论\nrobust error handling — 完善的错误处理",cat:"学术"},
+  {en:"empower",ph:"/ɪmˈpaʊər/",zh:"赋能、赋权、使有能力",ex:"Education empowers women. — 教育让女性获得力量\nfeel empowered — 感到有底气、有掌控感",cat:"学术"},
+  {en:"marginalized",ph:"/ˈmɑːrdʒɪnəlaɪzd/",zh:"被边缘化的",ex:"marginalized communities — 边缘化社区\nfeel marginalized — 感到被排斥、不被重视",cat:"学术"},
+  {en:"human cognition",zh:"人类认知",cat:"学术"},
+  {en:"miscellaneous",ph:"/ˌmɪsəˈleɪniəs/",zh:"各种各样的、混杂的、杂项的",ex:"miscellaneous expenses — 杂费、杂项开支",cat:"学术"},
+  {en:"promises to be",zh:"有望成为、看起来会是\n固定表达，不是字面的\"承诺\"",ex:"promises to be an engaging and enlightening semester",cat:"学术"},
+  {en:"engaging",ph:"/ɪnˈɡeɪdʒɪŋ/",zh:"引人入胜的",ex:"an engaging semester — 引人入胜的学期",cat:"学术"},
+  {en:"enlightening",ph:"/ɪnˈlaɪtənɪŋ/",zh:"富有启发的",ex:"an enlightening semester — 富有启发的学期",cat:"学术"},
+  {en:"elevator pitch",zh:"电梯演讲\n在乘一趟电梯的时间内（约30秒到1分钟）做完的简短自我介绍或推销",ex:"prepare a brief elevator pitch about yourself",cat:"学术"},
+
+  {en:"pitch",ph:"/pɪtʃ/",zh:"1. 推销、陈述\n2. 音高（音乐）\n3. 投掷（棒球）\n4. 球场（英式）\n5. 倾斜度、坡度",ex:"a sales pitch — 推销话术\nperfect pitch — 绝对音感\na football pitch — 足球场\nthe pitch of a roof — 屋顶的坡度",cat:"多义词"},
+  {en:"scale",ph:"/skeɪl/",zh:"1. 规模、程度\n2. 刻度、比例尺\n3. 秤\n4. 音阶\n5. 鳞片\n动词：扩展、缩放",ex:"on a large scale — 大规模地\nat scale — 大规模地（技术圈常用）\na kitchen scale — 厨房秤\nscale up / scale down — 扩大 / 缩小",cat:"多义词"},
+  {en:"dictate",ph:"/ˈdɪkteɪt/",zh:"1. 口述、听写\n2. 决定、支配（没有商量余地）",ex:"She dictated a letter to her assistant.\nThe budget dictates how many people we can hire.\nThe requirements dictate the system architecture.",cat:"多义词"},
+  {en:"gulf",ph:"/ɡʌlf/",zh:"1. 海湾\n2. 鸿沟、巨大差距（比喻）",ex:"the Gulf of Mexico — 墨西哥湾\nthe gulf between rich and poor — 贫富差距",cat:"多义词"},
+
+  {en:"sketching",ph:"/ˈskɛtʃɪŋ/",zh:"草图绘制\n快速画出粗略的界面草图",ex:"low-fidelity prototyping 的方法之一",cat:"HCI"},
+  {en:"storyboarding",ph:"/ˈstɔːriˌbɔːrdɪŋ/",zh:"故事板\n用一系列连续的画面展示用户使用产品的完整场景/流程",ex:"sketching 和 storyboarding 都是 low-fidelity prototyping 的方法",cat:"HCI"},
+  {en:"fidelity",ph:"/fɪˈdɛləti/",zh:"保真度、忠实度\n原型和最终产品有多像",ex:"lo-fi = 低保真（纸笔草图）\nhi-fi = 高保真（接近真实产品）\nhigh-fidelity audio — 高保真音响（Hi-Fi）\nfidelity to the original — 忠于原作",cat:"HCI"},
+  {en:"prototyping",ph:"/ˈproʊtəˌtaɪpɪŋ/",zh:"原型制作\n产品正式开发前做出的早期模型，用来测试想法、收集反馈",ex:"build a prototype — 做一个原型\nrapid prototyping — 快速原型制作\nlow-fi prototyping — 低保真原型制作",cat:"HCI"},
+  {en:"canyon wall",zh:"峡谷壁\ncanyon 是峡谷，wall 指两侧陡峭的岩壁",ex:"经典 HCI 案例：1995 年美航 965 航班因导航系统自动补全错误撞上峡谷壁，机上人员全部遇难",cat:"HCI"},
+  {en:"perception",ph:"/pərˈsɛpʃən/",zh:"感知、认知、看法",ex:"visual perception — 视觉感知\npublic perception — 公众看法\nperception gap — 认知差距",cat:"HCI"},
+  {en:"superficial",ph:"/ˌsuːpərˈfɪʃəl/",zh:"表面的、肤浅的\n反义词：profound / thorough",ex:"a superficial analysis — 浅层分析\nsuperficial understanding — 浮于表面的理解",cat:"HCI"},
+  {en:"newbie gains",zh:"新手红利期\n新手刚开始做某事时进步特别快的阶段，过了之后进入平台期（plateau）",ex:"newbie = 新手、菜鸟\ngains = 增长（健身圈指肌肉/力量增长）",cat:"HCI"},
+
+  {en:"undue hardship",zh:"过度负担\n负担重到雇主可以免除便利义务的程度",ex:"Title VII 下，雇主必须为员工宗教实践提供合理便利，除非造成 undue hardship",cat:"法律"},
+  {en:"fine print",zh:"细则、小字条款\n容易被忽略但能翻盘的关键细节",ex:"read the fine print — 看清细则\nbury sth in the fine print — 把某事藏在细则里\nthe fine print says… — 细则里写着…",cat:"法律"},
+  {en:"ins and outs",zh:"来龙去脉、方方面面\n永远用复数形式",ex:"She knows the ins and outs of employment law better than anyone.",cat:"法律"},
+  {en:"retract",ph:"/rɪˈtrækt/",zh:"正式撤回\n拼写注意：不是 retrack",ex:"retract a statement / an apology / an accusation\n名词形式：retraction — 撤回声明",cat:"法律"},
+  {en:"be reprimanded",ph:"/ˈrɛprɪmændɪd/",zh:"被处分、被训斥",cat:"法律"},
+  {en:"racial profiling",zh:"种族定型\n基于种族特征对人进行预判",cat:"法律"},
+
+  {en:"Sikh",ph:"/siːk/",zh:"锡克教徒\n读音与 seek 同音，不是 /sɪk/（sick）",ex:"锡克教 15 世纪发源于印度旁遮普地区，全球约 2500 万信徒",cat:"宗教"},
+  {en:"kirpan",ph:"/kɪrˈpɑːn/",zh:"锡克教礼刀\n信仰象征（象征扶弱抗暴），不是武器",ex:"He has worn a kirpan under his shirt every day since he was fifteen.",cat:"宗教"},
+  {en:"Amritdhari",ph:"/ˌʌmrɪtˈdɑːri/",zh:"受洗锡克教徒\n经过“甘露洗礼”仪式、正式入教",ex:"对 Amritdhari 而言，佩戴 kirpan 是强制义务，不是个人选择",cat:"宗教"},
+  {en:"lukewarm",ph:"/ˌluːkˈwɔːrm/",zh:"不冷不热的\n原意“微温的”，引申为态度缺乏热情",ex:"a lukewarm response — 反应平淡",cat:"宗教"},
+
+  {en:"human decency",zh:"做人的基本良知\n拼写注意：是 human，不是 hunman",ex:"basic human decency — 基本的做人良知\nnot a shred of human decency — 一丝良知都没有\nout of common decency — 出于起码的体面",cat:"话术"},
+  {en:"go viral",zh:"（在网上）疯传、爆红\n带贬义时暗示对方在博眼球",ex:"go viral over sth — 拿某事炒作走红\nCritics accused him of trying to go viral over his human rights.",cat:"话术"},
+  {en:"thrust",ph:"/θrʊst/",zh:"猛推、硬塞、强加\n不规则动词：thrust-thrust-thrust",ex:"thrust sth into sb’s face — 把某物硬塞给某人\nthrust sth upon sb — 把某物强加于人\nthe thrust of an argument — 论点的要旨",cat:"话术"},
+  {en:"holster",ph:"/ˈhoʊlstər/",zh:"刀鞘、枪套 / 收起武器\n引申为“收敛、退一步”",ex:"If you holster this weapon, we can sit down and talk.\n你要是把这家伙收起来，我们就能坐下来谈。",cat:"话术"},
+  {en:"dagger",ph:"/ˈdæɡər/",zh:"匕首、短剑\n把 kirpan 叫作 dagger 并不中立",ex:"look daggers at someone — 怒目而视",cat:"话术"},
+  {en:"It always goes like that.",zh:"事情总会这样\ngo = 事情发展、进行，不是“去”",ex:"How did it go? — 进行得怎么样？\nThat’s how it goes. — 就是这么回事。",cat:"话术"},
+
+  {en:"it’s such a delight",zh:"多么美好",cat:"情感"},
+  {en:"abusive",ph:"/əˈbjuːsɪv/",zh:"施暴的、虐待的",ex:"he was very abusive towards me — 他对我很粗暴",cat:"情感"},
+  {en:"go spiraling downhill",zh:"急剧恶化",ex:"Go spiraling downhill from there — 从那以后一切急剧恶化",cat:"情感"},
+  {en:"tear sb apart",zh:"把某人撕碎（比喻）",ex:"These experiences tear her apart. — 这些经历把她撕碎了",cat:"情感"},
+  {en:"self-destructive",ph:"/ˌsɛlf dɪˈstrʊktɪv/",zh:"自我毁灭的",cat:"情感"},
+  {en:"promiscuous",ph:"/prəˈmɪskjuəs/",zh:"放纵的",cat:"情感"},
+  {en:"vicious cycle",zh:"恶性循环",ex:"This became a vicious cycle. — 这成了一个恶性循环",cat:"情感"},
+  {en:"self-esteem",zh:"自尊心",ex:"it affected my self-esteem — 这严重影响了我的自尊心",cat:"情感"},
+  {en:"split up",zh:"分手",cat:"情感"},
+  {en:"nude",ph:"/nuːd/",zh:"裸体的",cat:"情感"},
+  {en:"deceased",ph:"/dɪˈsiːst/",zh:"已故的、死去的",cat:"情感"},
+  {en:"horrific",ph:"/hɔːˈrɪfɪk/",zh:"骇人的",cat:"情感"},
+  {en:"autopsy report",zh:"尸检报告",cat:"情感"},
+  {en:"gruesome",ph:"/ˈɡruːsəm/",zh:"血腥恐怖的",cat:"情感"},
+  {en:"delusion",ph:"/dɪˈluːʒən/",zh:"妄想、错觉",ex:"She realized she had been living in delusion.",cat:"情感"},
+  {en:"ascend",ph:"/əˈsɛnd/",zh:"上升",ex:"Her soul ascended up. — 她的灵魂仿佛升上高处",cat:"情感"},
+  {en:"lush",ph:"/lʌʃ/",zh:"茂盛的、葱郁的",ex:"lush bright green grass and big trees — 茂盛翠绿的草地和大树",cat:"情感"},
+  {en:"confide in",zh:"向某人倾诉、吐露心事",ex:"She began to confide in God. — 她开始向神倾诉",cat:"情感"},
+
+  {en:"prejudiced",ph:"/ˈprɛdʒədɪst/",zh:"有偏见的",cat:"社会"},
+  {en:"misogynist",ph:"/mɪˈsɑːdʒɪnɪst/",zh:"厌女者",cat:"社会"},
+  {en:"standing on ten toes",zh:"坚定地站出来（俚语）",ex:"people standing on ten toes — 需要有人坚定站出来",cat:"社会"},
+
+  {en:"Sorry, what was that?",zh:"抱歉，你刚刚说什么？",cat:"口语"},
+  {en:"Could you say that again slower?",zh:"你能再慢点说一遍吗？",cat:"口语"},
+  {en:"Yeah, totally.",zh:"对啊，真的",cat:"口语"},
+  {en:"That makes sense.",zh:"有道理",cat:"口语"},
+  {en:"I feel you.",zh:"我懂你，我理解你",cat:"口语"},
+
+  {en:"indices",ph:"/ˈɪndɪsiːz/",zh:"索引（index 的复数）",cat:"其他"},
+  {en:"trash chute",ph:"/ʃuːt/",zh:"垃圾通道、垃圾滑道",cat:"其他"},
+  {en:"chute",ph:"/ʃuːt/",zh:"滑道、斜槽",cat:"其他"},
+  {en:"limelight",ph:"/ˈlaɪmlaɪt/",zh:"聚光灯、公众关注的焦点",cat:"其他"},
+  {en:"steroids",ph:"/ˈstɛrɔɪdz/",zh:"类固醇",cat:"其他"},
+  {en:"big belly",zh:"大肚子",cat:"其他"},
+  {en:"curated",ph:"/kjʊˈreɪtɪd/",zh:"精心挑选的、策展的",ex:"a curated list — 精选清单",cat:"其他"},
+  {en:"grid",ph:"/ɡrɪd/",zh:"1. 网格、格子\n2. 电网\n3.（赛车）发车位",ex:"the power grid — 电力网\nCSS Grid — 网格布局\noff the grid — 脱离电网、隐居",cat:"其他"},
+
+  {en:"would have had to + V",zh:"虚拟语气 + 情态动词\n本来必须做某事，但没发生\nmust 没有过去分词，只能借 have to",ex:"He would have had to resign. 他本来就得辞职。\n✅ would have had to\n❌ would have musted",cat:"语法"},
+];
+
+const CATS = ["全部",...[...new Set(VOCAB.map(w=>w.cat))]];
+
+let known = new Set();
+try { known = new Set(JSON.parse(localStorage.getItem('vocab-known')||'[]')); } catch(e) {}
+function saveKnown() { try { localStorage.setItem('vocab-known', JSON.stringify([...known])); } catch(e) {} }
+
+let mode = 'browse';
+let activeCat = '全部';
+let searchQ = '';
+let studyIdx = 0;
+let studyFilter = 'all';
+let studyDeck = [];
+
+/* ── Kokoro TTS ── */
+let kokoroTTS = null;
+let kokoroReady = false;
+let kokoroVoice = 'af_heart';
+let currentPlayer = null;
+
+try {
+  const saved = localStorage.getItem('vocab-kokoro-voice');
+  if (saved) kokoroVoice = saved;
+} catch(e) {}
+
+document.getElementById('voice-select').value = kokoroVoice;
+document.getElementById('voice-select').addEventListener('change', function() {
+  kokoroVoice = this.value;
+  try { localStorage.setItem('vocab-kokoro-voice', kokoroVoice); } catch(e) {}
+});
+
+async function initKokoro() {
+  try {
+    const { KokoroTTS } = await import("https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js");
+    kokoroTTS = await KokoroTTS.from_pretrained(
+      "onnx-community/Kokoro-82M-v1.0-ONNX",
+      { dtype: "q8", device: "wasm" }
+    );
+    kokoroReady = true;
+    const st = document.getElementById('voice-status');
+    st.className = 'voice-status';
+    st.innerHTML = '<span class="dot"></span>AI 语音就绪';
+  } catch(e) {
+    console.warn('Kokoro TTS unavailable, using browser voice:', e);
+    const st = document.getElementById('voice-status');
+    st.className = 'voice-status';
+    st.innerHTML = '<span class="dot"></span>浏览器语音';
+    document.getElementById('voice-select').style.display = 'none';
+  }
+}
+initKokoro();
+
+/* ── Browser TTS fallback ── */
+let browserVoice = null;
+function pickBestVoice() {
+  if (!window.speechSynthesis) return;
+  const all = speechSynthesis.getVoices();
+  const en = all.filter(v => v.lang.startsWith('en'));
+  if (!en.length) return;
+  const rank = v => {
+    const n = v.name.toLowerCase();
+    if (n.includes('microsoft') && (n.includes('online') || n.includes('natural')) && v.lang === 'en-US') return 100;
+    if (n.includes('microsoft') && (n.includes('online') || n.includes('natural'))) return 95;
+    if (n.includes('google') && n.includes('us')) return 90;
+    if (n.includes('google')) return 85;
+    if (n.includes('enhanced') || n.includes('premium')) return 80;
+    if (n.includes('samantha')) return 70;
+    return 10;
+  };
+  en.sort((a, b) => rank(b) - rank(a));
+  browserVoice = en[0];
+}
+if (window.speechSynthesis) {
+  pickBestVoice();
+  speechSynthesis.onvoiceschanged = pickBestVoice;
+}
+
+/* ── Speak function ── */
+async function speak(text, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const btn = e && e.currentTarget;
+
+  if (currentPlayer) {
+    currentPlayer.pause();
+    currentPlayer = null;
+  }
+
+  if (kokoroReady && kokoroTTS) {
+    if (btn) btn.classList.add('speaking');
+    try {
+      const audio = await kokoroTTS.generate(text, { voice: kokoroVoice });
+      const blob = audio.toBlob();
+      const url = URL.createObjectURL(blob);
+      const player = new Audio(url);
+      currentPlayer = player;
+      player.onended = () => { URL.revokeObjectURL(url); if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+      player.onerror = () => { URL.revokeObjectURL(url); if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+      player.play();
+    } catch(err) {
+      console.warn('Kokoro speak error:', err);
+      if (btn) btn.classList.remove('speaking');
+      speakBrowser(text, btn);
+    }
+  } else {
+    speakBrowser(text, btn);
+  }
+}
+
+function speakBrowser(text, btn) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.9;
+  if (browserVoice) u.voice = browserVoice;
+  if (btn) { btn.classList.add('speaking'); u.onend = () => btn.classList.remove('speaking'); u.onerror = () => btn.classList.remove('speaking'); }
+  speechSynthesis.speak(u);
+}
+
+/* ── UI ── */
+function getFiltered() {
+  return VOCAB.filter(w => {
+    if (activeCat !== '全部' && w.cat !== activeCat) return false;
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      return w.en.toLowerCase().includes(q) || w.zh.includes(q) || (w.ph||'').includes(q) || (w.ex||'').includes(q);
+    }
+    return true;
+  });
+}
+
+function renderPills() {
+  const el = document.getElementById('pills');
+  el.innerHTML = CATS.map(c =>
+    `<button class="pill${c===activeCat?' active':''}" data-cat="${c}">${c}${c!=='全部'?` (${VOCAB.filter(w=>w.cat===c).length})`:''}  </button>`
+  ).join('');
+  el.querySelectorAll('.pill').forEach(b => b.onclick = () => {
+    activeCat = b.dataset.cat;
+    searchQ = '';
+    document.getElementById('search').value = '';
+    render();
+  });
+}
+
+const speakIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+
+function renderCard(w, i) {
+  const isKnown = known.has(w.en);
+  const zhDisplay = (w.zh||'').replace(/\n/g, '<br>');
+  const exDisplay = (w.ex||'').replace(/\n/g, '<br>');
+  return `<div class="card${isKnown?' known':''}" data-idx="${i}" onclick="flipCard(this)">
+    <div class="card-inner">
+      <div class="card-face card-front">
+        <div class="card-cat">${w.cat}</div>
+        <div class="card-en">${w.en}</div>
+        ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
+        <button class="speak-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="朗读">${speakIcon}</button>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-cat">${w.cat}</div>
+        <div class="card-zh">${zhDisplay}</div>
+        ${w.ex?`<div class="card-ex">${exDisplay}</div>`:''}
+        <button class="speak-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="朗读">${speakIcon}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function flipCard(el) { el.classList.toggle('flipped'); }
+
+function renderBrowse() {
+  const items = getFiltered();
+  const el = document.getElementById('browse-view');
+  if (!items.length) {
+    el.innerHTML = '<div class="empty">没有匹配的单词</div>';
+    return;
+  }
+  el.innerHTML = items.map((w,i) => renderCard(w,i)).join('');
+}
+
+function buildStudyDeck() {
+  let items = getFiltered();
+  if (studyFilter === 'learning') items = items.filter(w => !known.has(w.en));
+  studyDeck = [...items];
+  if (studyIdx >= studyDeck.length) studyIdx = Math.max(0, studyDeck.length - 1);
+}
+
+function renderStudy() {
+  buildStudyDeck();
+  const prog = document.getElementById('study-progress');
+  const bar = document.getElementById('progress-bar');
+  const card = document.getElementById('study-card');
+
+  if (!studyDeck.length) {
+    prog.innerHTML = studyFilter === 'learning' ? '全部掌握了！' : '没有匹配的单词';
+    bar.style.width = studyFilter === 'learning' ? '100%' : '0%';
+    document.getElementById('s-front').innerHTML = '<div class="card-en" style="font-size:20px;color:var(--text-sec)">' +
+      (studyFilter === 'learning' ? '全部掌握了' : '没有匹配的单词') + '</div>';
+    document.getElementById('s-back').innerHTML = '';
+    card.classList.remove('flipped');
+    return;
+  }
+
+  const w = studyDeck[studyIdx];
+  const zhDisplay = (w.zh||'').replace(/\n/g, '<br>');
+  const exDisplay = (w.ex||'').replace(/\n/g, '<br>');
+  prog.innerHTML = `<strong>${studyIdx+1}</strong> / ${studyDeck.length}`;
+  bar.style.width = ((studyIdx+1)/studyDeck.length*100)+'%';
+
+  const safeEn = w.en.replace(/'/g,"\\'");
+  document.getElementById('s-front').innerHTML =
+    `<div class="card-cat">${w.cat}</div>
+     <div class="card-en">${w.en}</div>
+     ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
+     <div class="card-hint">点击翻转</div>
+     <button class="speak-btn" onclick="speak('${safeEn}',event)" title="朗读">${speakIcon}</button>`;
+
+  document.getElementById('s-back').innerHTML =
+    `<div class="card-cat">${w.cat}</div>
+     <div class="card-zh">${zhDisplay}</div>
+     ${w.ex?`<div class="card-ex">${exDisplay}</div>`:''}
+     <button class="speak-btn" onclick="speak('${safeEn}',event)" title="朗读">${speakIcon}</button>`;
+
+  card.classList.remove('flipped');
+  document.getElementById('prev-btn').disabled = studyIdx === 0;
+  document.getElementById('next-btn').disabled = studyIdx >= studyDeck.length - 1;
+}
+
+function updateStats() {
+  document.getElementById('total-count').textContent = VOCAB.length + ' 词';
+  document.getElementById('mastered-count').textContent = known.size;
+}
+
+function render() {
+  renderPills();
+  updateStats();
+  const bv = document.getElementById('browse-view');
+  const sv = document.getElementById('study-view');
+  if (mode === 'browse') {
+    bv.classList.add('active'); sv.classList.remove('active');
+    renderBrowse();
+  } else {
+    bv.classList.remove('active'); sv.classList.add('active');
+    renderStudy();
+  }
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+}
+
+document.querySelectorAll('.mode-btn').forEach(b => b.onclick = () => {
+  mode = b.dataset.mode;
+  studyIdx = 0;
+  render();
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQ = e.target.value.trim();
+  studyIdx = 0;
+  render();
+});
+
+document.getElementById('study-card').onclick = () => document.getElementById('study-card').classList.toggle('flipped');
+document.getElementById('prev-btn').onclick = () => { if(studyIdx>0){studyIdx--;renderStudy();} };
+document.getElementById('next-btn').onclick = () => { if(studyIdx<studyDeck.length-1){studyIdx++;renderStudy();} };
+
+document.getElementById('gotit-btn').onclick = () => {
+  if(!studyDeck.length) return;
+  known.add(studyDeck[studyIdx].en);
+  saveKnown(); updateStats();
+  if(studyIdx<studyDeck.length-1) studyIdx++;
+  renderStudy();
+};
+document.getElementById('again-btn').onclick = () => {
+  if(!studyDeck.length) return;
+  known.delete(studyDeck[studyIdx].en);
+  saveKnown(); updateStats();
+  if(studyIdx<studyDeck.length-1) studyIdx++;
+  renderStudy();
+};
+
+document.getElementById('shuffle-btn').onclick = () => {
+  for(let i=studyDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[studyDeck[i],studyDeck[j]]=[studyDeck[j],studyDeck[i]];}
+  studyIdx=0; renderStudy();
+};
+
+document.querySelectorAll('.study-filter-btn').forEach(b => b.onclick = () => {
+  studyFilter = b.dataset.filter;
+  document.querySelectorAll('.study-filter-btn').forEach(x => x.classList.toggle('active', x===b));
+  studyIdx = 0;
+  renderStudy();
+});
+
+document.addEventListener('keydown', e => {
+  if(mode!=='study'||e.target.tagName==='INPUT') return;
+  if(e.code==='Space'){e.preventDefault();document.getElementById('study-card').classList.toggle('flipped');}
+  if(e.code==='ArrowLeft'&&studyIdx>0){studyIdx--;renderStudy();}
+  if(e.code==='ArrowRight'&&studyIdx<studyDeck.length-1){studyIdx++;renderStudy();}
+  if(e.code==='Digit1'||e.code==='Numpad1') document.getElementById('again-btn').click();
+  if(e.code==='Digit2'||e.code==='Numpad2') document.getElementById('gotit-btn').click();
+  if(e.code==='KeyS'&&studyDeck.length) speak(studyDeck[studyIdx].en);
+});
+
+render();
+</script>
+</body>
+</html>
