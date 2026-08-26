@@ -834,6 +834,13 @@ function getAudioCtx() {
 }
 
 /* ── Speak function ── */
+function decodeAudio(ctx, arrayBuf) {
+  return new Promise((resolve, reject) => {
+    try { ctx.decodeAudioData(arrayBuf, resolve, reject); }
+    catch(e) { reject(e); }
+  });
+}
+
 async function speak(text, e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   const btn = e && e.currentTarget;
@@ -848,24 +855,34 @@ async function speak(text, e) {
   }
 
   const ctx = getAudioCtx();
+  // Play silent buffer immediately to unlock AudioContext on iOS Safari
+  const unlock = ctx.createBuffer(1, 1, ctx.sampleRate);
+  const unlockSrc = ctx.createBufferSource();
+  unlockSrc.buffer = unlock;
+  unlockSrc.connect(ctx.destination);
+  unlockSrc.start();
 
   if (kokoroReady && kokoroTTS) {
     if (btn) btn.classList.add('speaking');
+    const st = document.getElementById('voice-status');
+    st.innerHTML = '<span class="dot" style="background:#f0ad4e"></span>生成中...';
     try {
       const result = await kokoroTTS.generate(text, { voice: kokoroVoice });
-      const blob = result.toBlob();
-      const arrayBuf = await blob.arrayBuffer();
-      const audioBuf = await ctx.decodeAudioData(arrayBuf);
+      const samples = result.audio;
+      const sr = result.sampling_rate || 24000;
+      const audioBuf = ctx.createBuffer(1, samples.length, sr);
+      audioBuf.getChannelData(0).set(samples);
       const src = ctx.createBufferSource();
       src.buffer = audioBuf;
       src.connect(ctx.destination);
       currentSource = src;
       src.onended = () => { if (btn) btn.classList.remove('speaking'); currentSource = null; };
       src.start();
+      st.innerHTML = '<span class="dot"></span>AI 语音就绪';
     } catch(err) {
       console.warn('Kokoro speak error:', err);
       if (btn) btn.classList.remove('speaking');
-      document.getElementById('voice-status').textContent = 'Error: ' + (err.message || err);
+      st.innerHTML = '<span class="dot" style="background:#d9534f"></span>Error: ' + (err.message || err);
       speakBrowser(text, btn);
     }
   } else {
