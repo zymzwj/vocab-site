@@ -848,33 +848,23 @@ async function speak(text, e) {
   }
   if (currentPlayer) {
     currentPlayer.pause();
+    currentPlayer.currentTime = 0;
     currentPlayer = null;
   }
 
-  const ctx = getAudioCtx();
-  const unlock = ctx.createBuffer(1, 1, ctx.sampleRate);
-  const unlockSrc = ctx.createBufferSource();
-  unlockSrc.buffer = unlock;
-  unlockSrc.connect(ctx.destination);
-  unlockSrc.start();
-
   if (btn) btn.classList.add('speaking');
 
-  // 1) Try pre-generated audio file
+  // 1) Try pre-generated audio file via <audio> element (best mobile compatibility)
+  const slug = audioSlug(text);
+  const audioUrl = 'audio/' + slug + '.wav';
   try {
-    const resp = await fetch('audio/' + audioSlug(text) + '.wav');
-    if (resp.ok) {
-      const arrayBuf = await resp.arrayBuffer();
-      const audioBuf = await new Promise((res, rej) =>
-        ctx.decodeAudioData(arrayBuf, res, rej));
-      const src = ctx.createBufferSource();
-      src.buffer = audioBuf;
-      src.connect(ctx.destination);
-      currentSource = src;
-      src.onended = () => { if (btn) btn.classList.remove('speaking'); currentSource = null; };
-      src.start();
-      return;
-    }
+    const a = new Audio(audioUrl);
+    a.preload = 'auto';
+    currentPlayer = a;
+    a.onended = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+    a.onerror = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+    await a.play();
+    return;
   } catch(_) {}
 
   // 2) Try Kokoro live generation (desktop)
