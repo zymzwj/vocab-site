@@ -854,20 +854,20 @@ async function speak(text, e) {
 
   if (btn) btn.classList.add('speaking');
 
-  // 1) Try pre-generated audio file (only for af_heart voice)
-  if (kokoroVoice === 'af_heart') {
-    const slug = audioSlug(text);
-    const audioUrl = 'audio/' + slug + '.wav';
-    try {
-      const a = new Audio(audioUrl);
-      a.preload = 'auto';
-      currentPlayer = a;
-      a.onended = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
-      a.onerror = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
-      await a.play();
-      return;
-    } catch(_) {}
-  }
+  // 1) Try pre-generated audio file
+  const slug = audioSlug(text);
+  const audioUrl = kokoroVoice === 'af_heart'
+    ? 'audio/' + slug + '.wav'
+    : 'audio/' + kokoroVoice + '/' + slug + '.wav';
+  try {
+    const a = new Audio(audioUrl);
+    a.preload = 'auto';
+    currentPlayer = a;
+    a.onended = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+    a.onerror = () => { if (btn) btn.classList.remove('speaking'); currentPlayer = null; };
+    await a.play();
+    return;
+  } catch(_) {}
 
   // 2) Try Kokoro live generation
   if (kokoroReady && kokoroTTS) {
