@@ -258,8 +258,9 @@ h1 {
 
 .card {
   perspective: 800px;
-  height: 180px;
+  min-height: 180px;
   cursor: pointer;
+  transition: height 0.3s ease;
 }
 .card-inner {
   position: relative;
@@ -291,6 +292,7 @@ h1 {
   transform: rotateY(180deg);
   background: var(--accent-soft);
   border-color: var(--accent);
+  overflow-y: auto;
 }
 
 .card.known .card-front {
@@ -554,7 +556,7 @@ kbd {
   header { padding: 20px 0 0; }
   h1 { font-size: 22px; }
   .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .card { height: 150px; }
+  .card { min-height: 150px; }
   .card-en { font-size: 17px; }
   .card-face { padding: 14px; }
   .study-card { min-height: 260px; }
@@ -564,7 +566,7 @@ kbd {
 }
 @media (max-width: 380px) {
   .card-grid { grid-template-columns: 1fr; }
-  .card { height: 140px; }
+  .card { min-height: 140px; }
 }
 
 .srs-rating {
@@ -1247,7 +1249,18 @@ function renderCard(w, i) {
   </div>`;
 }
 
-function flipCard(el) { el.classList.toggle('flipped'); }
+function flipCard(el) {
+  el.classList.toggle('flipped');
+  if (el.classList.contains('flipped')) {
+    requestAnimationFrame(() => {
+      const back = el.querySelector('.card-back');
+      const h = Math.max(back.scrollHeight + 2, 180);
+      el.style.height = h + 'px';
+    });
+  } else {
+    el.style.height = '';
+  }
+}
 
 function renderBrowse() {
   const items = getFiltered();
