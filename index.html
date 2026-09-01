@@ -597,9 +597,6 @@ kbd {
       <select id="voice-select">
         <option value="af_heart">Heart (美式女声)</option>
         <option value="af_bella">Bella (美式女声)</option>
-        <option value="af_nova">Nova (美式女声)</option>
-        <option value="af_sarah">Sarah (美式女声)</option>
-        <option value="bf_emma">Emma (英式女声)</option>
       </select>
       <span class="voice-status" id="voice-status"><span class="dot"></span>AI 语音就绪</span>
     </div>
@@ -794,7 +791,7 @@ let currentPlayer = null;
 
 try {
   const saved = localStorage.getItem('vocab-kokoro-voice');
-  if (saved) kokoroVoice = saved;
+  if (saved && ['af_heart','af_bella'].includes(saved)) kokoroVoice = saved;
 } catch(e) {}
 
 document.getElementById('voice-select').value = kokoroVoice;
