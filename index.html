@@ -431,10 +431,11 @@ h1 {
   perspective: 1000px;
   width: 100%;
   max-width: 480px;
-  height: 300px;
+  min-height: 300px;
   cursor: pointer;
 }
-.study-card .card-inner { height: 100%; }
+.study-card .card-inner { height: inherit; }
+.study-card.flipped .card-inner { transform: rotateY(180deg); }
 .study-card .card-face {
   padding: 32px;
   align-items: center;
@@ -556,7 +557,7 @@ kbd {
   .card { height: 150px; }
   .card-en { font-size: 17px; }
   .card-face { padding: 14px; }
-  .study-card { height: 260px; }
+  .study-card { min-height: 260px; }
   .study-card .card-en { font-size: 26px; }
   .study-card .card-zh { font-size: 16px; }
   .kbd-hint { display: none; }
@@ -564,6 +565,96 @@ kbd {
 @media (max-width: 380px) {
   .card-grid { grid-template-columns: 1fr; }
   .card { height: 140px; }
+}
+
+.srs-rating {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.srs-rating.visible { opacity: 1; pointer-events: auto; }
+.srs-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-ui);
+  min-width: 64px;
+}
+.srs-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow-md); }
+.srs-btn .srs-label { font-size: 14px; font-weight: 600; }
+.srs-btn .srs-interval { font-size: 11px; margin-top: 2px; opacity: 0.6; }
+.srs-btn.srs-forgot { border-color: #E05252; color: #E05252; }
+.srs-btn.srs-forgot:hover { background: #E0525210; }
+.srs-btn.srs-hard { border-color: #E09B52; color: #E09B52; }
+.srs-btn.srs-hard:hover { background: #E09B5210; }
+.srs-btn.srs-good { border-color: var(--accent); color: var(--accent); }
+.srs-btn.srs-good:hover { background: var(--accent-soft); }
+.srs-btn.srs-easy { border-color: #5288E0; color: #5288E0; }
+.srs-btn.srs-easy:hover { background: #5288E010; }
+
+.mastery-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  line-height: 1.2;
+}
+.mastery-new { background: var(--border); color: var(--text-sec); }
+.mastery-learning { background: #E09B5220; color: #E09B52; }
+.mastery-familiar { background: #5288E020; color: #5288E0; }
+.mastery-mastered { background: var(--accent-soft); color: var(--accent); }
+
+.srs-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-sec);
+  font-family: var(--font-ui);
+}
+.srs-stats .stat-num { font-weight: 600; }
+.srs-stats .due-num { color: #E05252; }
+.srs-stats .learning-num { color: #E09B52; }
+.srs-stats .mastered-num { color: var(--accent); }
+
+.auth-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sec);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.auth-btn:hover { border-color: var(--accent); color: var(--accent); }
+.auth-btn img { width: 18px; height: 18px; border-radius: 50%; }
+.auth-btn.signed-in { border-color: var(--accent); }
+
+.study-card .card-back { overflow-y: auto; }
+
+@media (max-width: 600px) {
+  .srs-rating { gap: 6px; }
+  .srs-btn { padding: 8px 10px; min-width: 56px; }
+  .srs-btn .srs-label { font-size: 12px; }
+  .srs-stats { gap: 10px; font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -580,12 +671,19 @@ kbd {
         <h1>生词本</h1>
         <div class="stats">
           <span id="total-count"></span>
-          <span>已掌握 <span class="mastered-count" id="mastered-count">0</span></span>
+          <div class="srs-stats">
+            <span>待复习 <span class="stat-num due-num" id="due-count">0</span></span>
+            <span>学习中 <span class="stat-num learning-num" id="learning-count">0</span></span>
+            <span>已掌握 <span class="stat-num mastered-num" id="mastered-count">0</span></span>
+          </div>
         </div>
       </div>
-      <div class="mode-toggle">
-        <button class="mode-btn active" data-mode="browse">浏览</button>
-        <button class="mode-btn" data-mode="study">学习</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="mode-toggle">
+          <button class="mode-btn active" data-mode="browse">浏览</button>
+          <button class="mode-btn" data-mode="study">学习</button>
+        </div>
+        <button class="auth-btn" id="auth-btn" onclick="toggleAuth()">登录同步</button>
       </div>
     </div>
     <div class="search-row">
@@ -611,8 +709,9 @@ kbd {
         <span class="study-progress-text" id="study-progress"></span>
         <div style="display:flex;gap:8px;align-items:center">
           <div class="study-filter">
-            <button class="study-filter-btn active" data-filter="all">全部</button>
-            <button class="study-filter-btn" data-filter="learning">待学</button>
+            <button class="study-filter-btn active" data-filter="due">今日复习</button>
+            <button class="study-filter-btn" data-filter="new">新词</button>
+            <button class="study-filter-btn" data-filter="all">全部</button>
           </div>
           <button class="shuffle-btn" id="shuffle-btn">打乱</button>
         </div>
@@ -628,26 +727,44 @@ kbd {
         </div>
       </div>
 
+      <div class="srs-rating" id="srs-rating">
+        <button class="srs-btn srs-forgot" onclick="srsRate(0)">
+          <span class="srs-label">忘了</span>
+          <span class="srs-interval" id="int-0"></span>
+        </button>
+        <button class="srs-btn srs-hard" onclick="srsRate(1)">
+          <span class="srs-label">模糊</span>
+          <span class="srs-interval" id="int-1"></span>
+        </button>
+        <button class="srs-btn srs-good" onclick="srsRate(2)">
+          <span class="srs-label">记得</span>
+          <span class="srs-interval" id="int-2"></span>
+        </button>
+        <button class="srs-btn srs-easy" onclick="srsRate(3)">
+          <span class="srs-label">简单</span>
+          <span class="srs-interval" id="int-3"></span>
+        </button>
+      </div>
+
       <div class="study-nav">
         <button class="nav-btn" id="prev-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="action-btns">
-          <button class="action-btn again-btn" id="again-btn">再看看</button>
-          <button class="action-btn got-it" id="gotit-btn">掌握了</button>
-        </div>
         <button class="nav-btn" id="next-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
 
       <div class="kbd-hint">
-        <kbd>Space</kbd> 翻转 &nbsp; <kbd>&larr;</kbd> <kbd>&rarr;</kbd> 切换 &nbsp; <kbd>S</kbd> 朗读 &nbsp; <kbd>1</kbd> 再看看 &nbsp; <kbd>2</kbd> 掌握了
+        <kbd>Space</kbd> 翻转 &nbsp; <kbd>&larr;</kbd> <kbd>&rarr;</kbd> 切换 &nbsp; <kbd>S</kbd> 朗读 &nbsp; <kbd>1</kbd> 忘了 <kbd>2</kbd> 模糊 <kbd>3</kbd> 记得 <kbd>4</kbd> 简单
       </div>
     </div>
   </main>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 <script>
 const VOCAB = [
   {en:"geographical points",zh:"地理位置",ex:"data passes through multiple geographical points — 数据经过多个地理节点",cat:"网络"},
@@ -772,16 +889,154 @@ const VOCAB = [
 
 const CATS = ["全部",...[...new Set(VOCAB.map(w=>w.cat))]];
 
-let known = new Set();
-try { known = new Set(JSON.parse(localStorage.getItem('vocab-known')||'[]')); } catch(e) {}
-function saveKnown() { try { localStorage.setItem('vocab-known', JSON.stringify([...known])); } catch(e) {} }
+/* ── SRS Data (SM-2 间隔重复) ── */
+let srsStore = {};
+try { srsStore = JSON.parse(localStorage.getItem('vocab-srs') || '{}'); } catch(e) {}
+function saveSrsLocal() { try { localStorage.setItem('vocab-srs', JSON.stringify(srsStore)); } catch(e) {} }
+
+// migrate old "known" data
+(function migrateOldKnown() {
+  let old = [];
+  try { old = JSON.parse(localStorage.getItem('vocab-known') || '[]'); } catch(e) {}
+  if (!old.length) return;
+  const today = todayStr();
+  const next = addDays(today, 3);
+  old.forEach(w => {
+    if (!srsStore[w]) srsStore[w] = { interval: 3, ease: 2.5, reps: 2, nextReview: next, lastReview: today };
+  });
+  saveSrsLocal();
+  try { localStorage.removeItem('vocab-known'); } catch(e) {}
+})();
+
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function addDays(dateStr, days) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+}
+
+function getSrs(word) {
+  return srsStore[word] || { interval: 0, ease: 2.5, reps: 0, nextReview: '', lastReview: '' };
+}
+
+function getMastery(word) {
+  const s = getSrs(word);
+  if (s.reps === 0) return 'new';
+  if (s.interval < 7) return 'learning';
+  if (s.interval < 21) return 'familiar';
+  return 'mastered';
+}
+
+function isDue(word) {
+  const s = getSrs(word);
+  if (s.reps === 0) return true;
+  return s.nextReview <= todayStr();
+}
+
+function previewInterval(word, rating) {
+  const s = getSrs(word);
+  let interval = s.interval, ease = s.ease, reps = s.reps;
+  if (rating === 0) { interval = 0; }
+  else if (rating === 1) {
+    interval = reps < 2 ? 1 : Math.max(1, Math.round(interval * 1.2));
+  } else if (rating === 2) {
+    if (reps === 0) interval = 1;
+    else if (reps === 1) interval = 3;
+    else interval = Math.round(interval * ease);
+  } else {
+    if (reps === 0) interval = 4;
+    else interval = Math.round(interval * ease * 1.3);
+  }
+  return interval;
+}
+
+function formatInterval(days) {
+  if (days === 0) return '今天';
+  if (days === 1) return '明天';
+  if (days < 30) return days + '天';
+  if (days < 365) return Math.round(days / 30) + '个月';
+  return Math.round(days / 365) + '年';
+}
+
+// backward compat: compute "known" from SRS
+const known = { has(w) { return getMastery(w) === 'mastered'; }, get size() { return VOCAB.filter(w => getMastery(w.en) === 'mastered').length; } };
 
 let mode = 'browse';
 let activeCat = '全部';
 let searchQ = '';
 let studyIdx = 0;
-let studyFilter = 'all';
+let studyFilter = 'due';
 let studyDeck = [];
+
+/* ── Firebase ── */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDX3R0QNXW3hEfO7Hs6eq9OrLwaJmUcRoQ",
+  authDomain: "vocabulary-e4dfe.firebaseapp.com",
+  projectId: "vocabulary-e4dfe",
+  storageBucket: "vocabulary-e4dfe.firebasestorage.app",
+  messagingSenderId: "836455866696",
+  appId: "1:836455866696:web:c5317d44b8b6724ce7537d"
+};
+
+let db = null, fbUser = null;
+function initFirebase() {
+  if (!FIREBASE_CONFIG.apiKey || typeof firebase === 'undefined') return;
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  firebase.auth().onAuthStateChanged(user => {
+    fbUser = user;
+    const btn = document.getElementById('auth-btn');
+    if (user) {
+      btn.innerHTML = (user.photoURL ? `<img src="${user.photoURL}" alt="">` : '') + user.displayName;
+      btn.classList.add('signed-in');
+      loadFromFirestore();
+    } else {
+      btn.textContent = '登录同步';
+      btn.classList.remove('signed-in');
+    }
+  });
+}
+initFirebase();
+
+function toggleAuth() {
+  if (!FIREBASE_CONFIG.apiKey) {
+    alert('Firebase 尚未配置。请在代码中填入 FIREBASE_CONFIG。');
+    return;
+  }
+  if (fbUser) {
+    firebase.auth().signOut();
+  } else {
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+}
+
+async function loadFromFirestore() {
+  if (!db || !fbUser) return;
+  try {
+    const doc = await db.collection('users').doc(fbUser.uid).get();
+    if (doc.exists && doc.data().srs) {
+      const remote = doc.data().srs;
+      Object.keys(remote).forEach(w => {
+        const local = srsStore[w];
+        if (!local || (remote[w].lastReview || '') > (local.lastReview || '')) {
+          srsStore[w] = remote[w];
+        }
+      });
+      Object.keys(srsStore).forEach(w => {
+        if (!remote[w]) { /* local only, keep it */ }
+      });
+      saveSrsLocal();
+      render();
+    }
+  } catch(e) { console.warn('Firestore load error:', e); }
+}
+
+async function saveToFirestore() {
+  if (!db || !fbUser) return;
+  try {
+    await db.collection('users').doc(fbUser.uid).set({ srs: srsStore }, { merge: true });
+  } catch(e) { console.warn('Firestore save error:', e); }
+}
 
 /* ── Kokoro TTS ── */
 let kokoroTTS = null;
@@ -948,7 +1203,7 @@ function getFiltered() {
       return w.en.toLowerCase().includes(q) || w.zh.includes(q) || (w.ph||'').includes(q) || (w.ex||'').includes(q);
     }
     return true;
-  });
+  }).reverse();
 }
 
 function renderPills() {
@@ -966,13 +1221,17 @@ function renderPills() {
 
 const speakIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
 
+const MASTERY_LABELS = { new: '新', learning: '学', familiar: '熟', mastered: '掌握' };
+
 function renderCard(w, i) {
-  const isKnown = known.has(w.en);
+  const m = getMastery(w.en);
+  const isKnown = m === 'mastered';
   const zhDisplay = (w.zh||'').replace(/\n/g, '<br>');
   const exDisplay = (w.ex||'').replace(/\n/g, '<br>');
   return `<div class="card${isKnown?' known':''}" data-idx="${i}" onclick="flipCard(this)">
     <div class="card-inner">
       <div class="card-face card-front">
+        <span class="mastery-badge mastery-${m}">${MASTERY_LABELS[m]}</span>
         <div class="card-cat">${w.cat}</div>
         <div class="card-en">${w.en}</div>
         ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
@@ -1002,7 +1261,8 @@ function renderBrowse() {
 
 function buildStudyDeck() {
   let items = getFiltered();
-  if (studyFilter === 'learning') items = items.filter(w => !known.has(w.en));
+  if (studyFilter === 'due') items = items.filter(w => isDue(w.en));
+  else if (studyFilter === 'new') items = items.filter(w => getSrs(w.en).reps === 0);
   studyDeck = [...items];
   if (studyIdx >= studyDeck.length) studyIdx = Math.max(0, studyDeck.length - 1);
 }
@@ -1012,26 +1272,31 @@ function renderStudy() {
   const prog = document.getElementById('study-progress');
   const bar = document.getElementById('progress-bar');
   const card = document.getElementById('study-card');
+  const ratingEl = document.getElementById('srs-rating');
 
   if (!studyDeck.length) {
-    prog.innerHTML = studyFilter === 'learning' ? '全部掌握了！' : '没有匹配的单词';
-    bar.style.width = studyFilter === 'learning' ? '100%' : '0%';
+    const msgs = { due: '今日复习完成！', new: '没有新词了', all: '没有匹配的单词' };
+    prog.innerHTML = msgs[studyFilter] || '没有匹配的单词';
+    bar.style.width = studyFilter === 'due' ? '100%' : '0%';
     document.getElementById('s-front').innerHTML = '<div class="card-en" style="font-size:20px;color:var(--text-sec)">' +
-      (studyFilter === 'learning' ? '全部掌握了' : '没有匹配的单词') + '</div>';
+      (msgs[studyFilter] || '没有匹配的单词') + '</div>';
     document.getElementById('s-back').innerHTML = '';
     card.classList.remove('flipped');
+    ratingEl.classList.remove('visible');
     return;
   }
 
   const w = studyDeck[studyIdx];
   const zhDisplay = (w.zh||'').replace(/\n/g, '<br>');
   const exDisplay = (w.ex||'').replace(/\n/g, '<br>');
+  const m = getMastery(w.en);
   prog.innerHTML = `<strong>${studyIdx+1}</strong> / ${studyDeck.length}`;
   bar.style.width = ((studyIdx+1)/studyDeck.length*100)+'%';
 
   const safeEn = w.en.replace(/'/g,"\\'");
   document.getElementById('s-front').innerHTML =
-    `<div class="card-cat">${w.cat}</div>
+    `<span class="mastery-badge mastery-${m}">${MASTERY_LABELS[m]}</span>
+     <div class="card-cat">${w.cat}</div>
      <div class="card-en">${w.en}</div>
      ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
      <div class="card-hint">点击翻转</div>
@@ -1043,14 +1308,66 @@ function renderStudy() {
      ${w.ex?`<div class="card-ex">${exDisplay}</div>`:''}
      <button class="speak-btn" onclick="speak('${safeEn}',event)" title="朗读">${speakIcon}</button>`;
 
+  for (let r = 0; r < 4; r++) {
+    document.getElementById('int-' + r).textContent = formatInterval(previewInterval(w.en, r));
+  }
+
   card.classList.remove('flipped');
+  ratingEl.classList.remove('visible');
   document.getElementById('prev-btn').disabled = studyIdx === 0;
   document.getElementById('next-btn').disabled = studyIdx >= studyDeck.length - 1;
+
+  requestAnimationFrame(() => {
+    const front = document.getElementById('s-front');
+    const back = document.getElementById('s-back');
+    const h = Math.max(front.scrollHeight, back.scrollHeight, 280);
+    card.style.height = h + 'px';
+  });
+}
+
+function srsRate(rating) {
+  if (!studyDeck.length) return;
+  const w = studyDeck[studyIdx];
+  const s = getSrs(w.en);
+  const today = todayStr();
+
+  if (rating === 0) {
+    s.reps = 0; s.interval = 0;
+    s.ease = Math.max(1.3, s.ease - 0.2);
+  } else if (rating === 1) {
+    s.reps++;
+    s.interval = s.reps < 2 ? 1 : Math.max(1, Math.round(s.interval * 1.2));
+    s.ease = Math.max(1.3, s.ease - 0.15);
+  } else if (rating === 2) {
+    s.reps++;
+    if (s.reps === 1) s.interval = 1;
+    else if (s.reps === 2) s.interval = 3;
+    else s.interval = Math.round(s.interval * s.ease);
+  } else {
+    s.reps++;
+    if (s.reps === 1) s.interval = 4;
+    else s.interval = Math.round(s.interval * s.ease * 1.3);
+    s.ease += 0.15;
+  }
+
+  s.nextReview = addDays(today, s.interval);
+  s.lastReview = today;
+  srsStore[w.en] = s;
+  saveSrsLocal();
+  saveToFirestore();
+
+  renderStudy();
+  updateStats();
 }
 
 function updateStats() {
   document.getElementById('total-count').textContent = VOCAB.length + ' 词';
-  document.getElementById('mastered-count').textContent = known.size;
+  const due = VOCAB.filter(w => isDue(w.en)).length;
+  const learning = VOCAB.filter(w => { const m = getMastery(w.en); return m === 'learning' || m === 'familiar'; }).length;
+  const mastered = VOCAB.filter(w => getMastery(w.en) === 'mastered').length;
+  document.getElementById('due-count').textContent = due;
+  document.getElementById('learning-count').textContent = learning;
+  document.getElementById('mastered-count').textContent = mastered;
 }
 
 function render() {
@@ -1080,24 +1397,13 @@ document.getElementById('search').addEventListener('input', e => {
   render();
 });
 
-document.getElementById('study-card').onclick = () => document.getElementById('study-card').classList.toggle('flipped');
+document.getElementById('study-card').onclick = () => {
+  const card = document.getElementById('study-card');
+  card.classList.toggle('flipped');
+  document.getElementById('srs-rating').classList.toggle('visible', card.classList.contains('flipped'));
+};
 document.getElementById('prev-btn').onclick = () => { if(studyIdx>0){studyIdx--;renderStudy();} };
 document.getElementById('next-btn').onclick = () => { if(studyIdx<studyDeck.length-1){studyIdx++;renderStudy();} };
-
-document.getElementById('gotit-btn').onclick = () => {
-  if(!studyDeck.length) return;
-  known.add(studyDeck[studyIdx].en);
-  saveKnown(); updateStats();
-  if(studyIdx<studyDeck.length-1) studyIdx++;
-  renderStudy();
-};
-document.getElementById('again-btn').onclick = () => {
-  if(!studyDeck.length) return;
-  known.delete(studyDeck[studyIdx].en);
-  saveKnown(); updateStats();
-  if(studyIdx<studyDeck.length-1) studyIdx++;
-  renderStudy();
-};
 
 document.getElementById('shuffle-btn').onclick = () => {
   for(let i=studyDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[studyDeck[i],studyDeck[j]]=[studyDeck[j],studyDeck[i]];}
@@ -1113,11 +1419,18 @@ document.querySelectorAll('.study-filter-btn').forEach(b => b.onclick = () => {
 
 document.addEventListener('keydown', e => {
   if(mode!=='study'||e.target.tagName==='INPUT') return;
-  if(e.code==='Space'){e.preventDefault();document.getElementById('study-card').classList.toggle('flipped');}
+  if(e.code==='Space'){
+    e.preventDefault();
+    const card = document.getElementById('study-card');
+    card.classList.toggle('flipped');
+    document.getElementById('srs-rating').classList.toggle('visible', card.classList.contains('flipped'));
+  }
   if(e.code==='ArrowLeft'&&studyIdx>0){studyIdx--;renderStudy();}
   if(e.code==='ArrowRight'&&studyIdx<studyDeck.length-1){studyIdx++;renderStudy();}
-  if(e.code==='Digit1'||e.code==='Numpad1') document.getElementById('again-btn').click();
-  if(e.code==='Digit2'||e.code==='Numpad2') document.getElementById('gotit-btn').click();
+  if(e.code==='Digit1'||e.code==='Numpad1') srsRate(0);
+  if(e.code==='Digit2'||e.code==='Numpad2') srsRate(1);
+  if(e.code==='Digit3'||e.code==='Numpad3') srsRate(2);
+  if(e.code==='Digit4'||e.code==='Numpad4') srsRate(3);
   if(e.code==='KeyS'&&studyDeck.length) speak(studyDeck[studyIdx].en);
 });
 
