@@ -914,6 +914,8 @@ const VOCAB = [
   {en:"distortion",ph:"/dɪˈstɔːrʃən/",zh:"扭曲；失真；歪曲\n动词 distort",ex:"audio distortion — 音频失真\ncognitive distortion — 认知扭曲（心理学）\ndistortion of facts — 歪曲事实",cat:"其他"},
   {en:"hop",ph:"/hɑːp/",zh:"（网络）跳、跳数\n数据包经过一个路由器/节点算一跳",ex:"hop count — 跳数\nnext hop — 下一跳\nThe packet traversed 5 hops. — 数据包经过了5跳",cat:"网络"},
   {en:"malfunctioning",ph:"/mælˈfʌŋkʃənɪŋ/",zh:"故障的；运转不正常的\nmal（坏）+ functioning（运行）",ex:"a malfunctioning router — 出故障的路由器\nThe device is malfunctioning. — 设备出故障了",cat:"网络"},
+  {en:"geosynchronous orbit",ph:"/ˌdʒiːoʊˈsɪŋkrənəs ˈɔːrbɪt/",zh:"地球同步轨道\n卫星24小时绕一圈，从地面看像固定不动\n高度约 35,786 km",ex:"geostationary orbit（GEO）— 地球静止轨道\n用途：卫星电视、气象、通信\n缺点：延迟高（~600ms 往返）",cat:"网络"},
+  {en:"cellular networks",ph:"/ˈsɛljələr ˈnɛtwɜːrks/",zh:"蜂窝网络（手机移动网络）\n地面分成六边形 cell，每个 cell 有基站",ex:"cell tower — 基站/信号塔\ncellular coverage — 蜂窝网络覆盖\nhandoff / handover — 基站切换",cat:"网络"},
 ];
 
 const CATS = ["全部",...[...new Set(VOCAB.map(w=>w.cat))]];
