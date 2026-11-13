@@ -262,6 +262,10 @@ h1 {
   cursor: pointer;
   transition: height 0.3s ease;
 }
+.card.has-img { min-height: 300px; }
+.card-img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-top: 10px; background: var(--border); }
+.study-card .card-img { height: 170px; max-width: 320px; align-self: center; }
+@media (max-width: 600px) { .card.has-img { min-height: 270px; } .card-img { height: 110px; } }
 .card-inner {
   position: relative;
   width: 100%;
@@ -772,7 +776,7 @@ const VOCAB = [
   {en:"geographical points",zh:"地理位置",ex:"data passes through multiple geographical points — 数据经过多个地理节点",cat:"网络"},
   {en:"twisted pair",zh:"双绞线",ex:"Cat-5 twisted pair cable — 五类双绞线\ntwisted pair is the most common LAN cabling",cat:"网络"},
   {en:"coaxial cable",zh:"同轴电缆",ex:"coaxial cable for cable TV — 有线电视用的同轴电缆\ncoax vs. fiber — 同轴 vs. 光纤",cat:"网络"},
-  {en:"optical fiber",zh:"光纤",ex:"optical fiber offers higher bandwidth — 光纤提供更高带宽\nfiber-optic network — 光纤网络",cat:"网络"},
+  {en:"optical fiber",zh:"光纤",ex:"optical fiber offers higher bandwidth — 光纤提供更高带宽\nfiber-optic network — 光纤网络",cat:"网络",img:"images/optical_fiber.jpg"},
   {en:"congestion",ph:"/kənˈdʒɛstʃən/",zh:"拥塞",ex:"network congestion — 网络拥塞\ncongestion control algorithm — 拥塞控制算法\ntraffic congestion — 交通拥堵",cat:"网络"},
   {en:"bandwidth bottleneck",zh:"带宽瓶颈",ex:"the server became a bandwidth bottleneck — 服务器成了带宽瓶颈",cat:"网络"},
   {en:"long-haul",ph:"/lɔːŋhɔːl/",zh:"长途的",ex:"long-haul fiber links — 长途光纤链路\na long-haul flight — 长途航班",cat:"网络"},
@@ -799,11 +803,11 @@ const VOCAB = [
   {en:"dictate",ph:"/ˈdɪkteɪt/",zh:"1. 口述、听写\n2. 决定、支配（没有商量余地）",ex:"She dictated a letter to her assistant.\nThe budget dictates how many people we can hire.\nThe requirements dictate the system architecture.",cat:"多义词"},
   {en:"gulf",ph:"/ɡʌlf/",zh:"1. 海湾\n2. 鸿沟、巨大差距（比喻）",ex:"the Gulf of Mexico — 墨西哥湾\nthe gulf between rich and poor — 贫富差距",cat:"多义词"},
 
-  {en:"sketching",ph:"/ˈskɛtʃɪŋ/",zh:"草图绘制\n快速画出粗略的界面草图",ex:"low-fidelity prototyping 的方法之一",cat:"HCI"},
-  {en:"storyboarding",ph:"/ˈstɔːriˌbɔːrdɪŋ/",zh:"故事板\n用一系列连续的画面展示用户使用产品的完整场景/流程",ex:"sketching 和 storyboarding 都是 low-fidelity prototyping 的方法",cat:"HCI"},
+  {en:"sketching",ph:"/ˈskɛtʃɪŋ/",zh:"草图绘制\n快速画出粗略的界面草图",ex:"low-fidelity prototyping 的方法之一",cat:"HCI",img:"images/sketching.jpg"},
+  {en:"storyboarding",ph:"/ˈstɔːriˌbɔːrdɪŋ/",zh:"故事板\n用一系列连续的画面展示用户使用产品的完整场景/流程",ex:"sketching 和 storyboarding 都是 low-fidelity prototyping 的方法",cat:"HCI",img:"images/storyboarding.jpg"},
   {en:"fidelity",ph:"/fɪˈdɛləti/",zh:"保真度、忠实度\n原型和最终产品有多像",ex:"lo-fi = 低保真（纸笔草图）\nhi-fi = 高保真（接近真实产品）\nhigh-fidelity audio — 高保真音响（Hi-Fi）\nfidelity to the original — 忠于原作",cat:"HCI"},
   {en:"prototyping",ph:"/ˈproʊtəˌtaɪpɪŋ/",zh:"原型制作\n产品正式开发前做出的早期模型，用来测试想法、收集反馈",ex:"build a prototype — 做一个原型\nrapid prototyping — 快速原型制作\nlow-fi prototyping — 低保真原型制作",cat:"HCI"},
-  {en:"canyon wall",zh:"峡谷壁\ncanyon 是峡谷，wall 指两侧陡峭的岩壁",ex:"经典 HCI 案例：1995 年美航 965 航班因导航系统自动补全错误撞上峡谷壁，机上人员全部遇难",cat:"HCI"},
+  {en:"canyon wall",zh:"峡谷壁\ncanyon 是峡谷，wall 指两侧陡峭的岩壁",ex:"经典 HCI 案例：1995 年美航 965 航班因导航系统自动补全错误撞上峡谷壁，机上人员全部遇难",cat:"HCI",img:"images/canyon_wall.jpg"},
   {en:"perception",ph:"/pərˈsɛpʃən/",zh:"感知、认知、看法",ex:"visual perception — 视觉感知\npublic perception — 公众看法\nperception gap — 认知差距",cat:"HCI"},
   {en:"superficial",ph:"/ˌsuːpərˈfɪʃəl/",zh:"表面的、肤浅的\n反义词：profound / thorough",ex:"a superficial analysis — 浅层分析\nsuperficial understanding — 浮于表面的理解",cat:"HCI"},
   {en:"newbie gains",zh:"新手红利期\n新手刚开始做某事时进步特别快的阶段，过了之后进入平台期（plateau）",ex:"newbie = 新手、菜鸟\ngains = 增长（健身圈指肌肉/力量增长）",cat:"HCI"},
@@ -816,14 +820,14 @@ const VOCAB = [
   {en:"racial profiling",zh:"种族定型\n基于种族特征对人进行预判",ex:"racial profiling by police — 警察的种族定型\nRacial profiling is illegal in many jurisdictions.",cat:"法律"},
 
   {en:"Sikh",ph:"/siːk/",zh:"锡克教徒\n读音与 seek 同音，不是 /sɪk/（sick）",ex:"锡克教 15 世纪发源于印度旁遮普地区，全球约 2500 万信徒",cat:"宗教"},
-  {en:"kirpan",ph:"/kɪrˈpɑːn/",zh:"锡克教礼刀\n信仰象征（象征扶弱抗暴），不是武器",ex:"He has worn a kirpan under his shirt every day since he was fifteen.",cat:"宗教"},
+  {en:"kirpan",ph:"/kɪrˈpɑːn/",zh:"锡克教礼刀\n信仰象征（象征扶弱抗暴），不是武器",ex:"He has worn a kirpan under his shirt every day since he was fifteen.",cat:"宗教",img:"images/kirpan.jpg"},
   {en:"Amritdhari",ph:"/ˌʌmrɪtˈdɑːri/",zh:"受洗锡克教徒\n经过「甘露洗礼」仪式、正式入教",ex:"对 Amritdhari 而言，佩戴 kirpan 是强制义务，不是个人选择",cat:"宗教"},
   {en:"lukewarm",ph:"/ˌluːkˈwɔːrm/",zh:"不冷不热的\n原意「微温的」，引申为态度缺乏热情",ex:"a lukewarm response — 反应平淡",cat:"宗教"},
 
   {en:"human decency",zh:"做人的基本良知\n拼写注意：是 human，不是 hunman",ex:"basic human decency — 基本的做人良知\nnot a shred of human decency — 一丝良知都没有\nout of common decency — 出于起码的体面",cat:"话术"},
   {en:"go viral",zh:"（在网上）疯传、爆红\n带贬义时暗示对方在博眼球",ex:"go viral over sth — 拿某事炒作走红\nCritics accused him of trying to go viral over his human rights.",cat:"话术"},
   {en:"thrust",ph:"/θrʊst/",zh:"猛推、硬塞、强加\n不规则动词：thrust-thrust-thrust",ex:"thrust sth into sb’s face — 把某物硬塞给某人\nthrust sth upon sb — 把某物强加于人\nthe thrust of an argument — 论点的要旨",cat:"话术"},
-  {en:"holster",ph:"/ˈhoʊlstər/",zh:"刀鞘、枪套 / 收起武器\n引申为「收敛、退一步」",ex:"If you holster this weapon, we can sit down and talk.\n你要是把这家伙收起来，我们就能坐下来谈。",cat:"话术"},
+  {en:"holster",ph:"/ˈhoʊlstər/",zh:"刀鞘、枪套 / 收起武器\n引申为「收敛、退一步」",ex:"If you holster this weapon, we can sit down and talk.\n你要是把这家伙收起来，我们就能坐下来谈。",cat:"话术",img:"images/holster.jpg"},
   {en:"dagger",ph:"/ˈdæɡər/",zh:"匕首、短剑\n把 kirpan 叫作 dagger 并不中立",ex:"look daggers at someone — 怒目而视",cat:"话术"},
   {en:"It always goes like that.",zh:"事情总会这样\ngo = 事情发展、进行，不是「去」",ex:"How did it go? — 进行得怎么样？\nThat’s how it goes. — 就是这么回事。",cat:"话术"},
 
@@ -842,8 +846,8 @@ const VOCAB = [
   {en:"autopsy report",zh:"尸检报告",ex:"The autopsy report revealed the cause of death. — 尸检报告揭示了死因\nperform an autopsy — 进行尸检",cat:"情感"},
   {en:"gruesome",ph:"/ˈɡruːsəm/",zh:"血腥恐怖的",ex:"gruesome details — 血腥的细节\na gruesome murder — 一起骇人的谋杀案",cat:"情感"},
   {en:"delusion",ph:"/dɪˈluːʒən/",zh:"妄想、错觉",ex:"She realized she had been living in delusion.",cat:"情感"},
-  {en:"ascend",ph:"/əˈsɛnd/",zh:"上升",ex:"Her soul ascended up. — 她的灵魂仿佛升上高处",cat:"情感"},
-  {en:"lush",ph:"/lʌʃ/",zh:"茂盛的、葱郁的",ex:"lush bright green grass and big trees — 茂盛翠绿的草地和大树",cat:"情感"},
+  {en:"ascend",ph:"/əˈsɛnd/",zh:"上升",ex:"Her soul ascended up. — 她的灵魂仿佛升上高处",cat:"情感",img:"images/ascend.jpg"},
+  {en:"lush",ph:"/lʌʃ/",zh:"茂盛的、葱郁的",ex:"lush bright green grass and big trees — 茂盛翠绿的草地和大树",cat:"情感",img:"images/lush.jpg"},
   {en:"confide in",zh:"向某人倾诉、吐露心事",ex:"She began to confide in God. — 她开始向神倾诉",cat:"情感"},
 
   {en:"prejudiced",ph:"/ˈprɛdʒədɪst/",zh:"有偏见的",ex:"prejudiced against minorities — 对少数群体有偏见\na prejudiced view — 带偏见的看法",cat:"社会"},
@@ -857,8 +861,8 @@ const VOCAB = [
   {en:"I feel you.",zh:"我懂你，我理解你",ex:"A: I'm so tired of studying. B: I feel you.\n表示感同身受，比 I understand 更口语化",cat:"口语"},
 
   {en:"indices",ph:"/ˈɪndɪsiːz/",zh:"索引（index 的复数）",ex:"database indices — 数据库索引\nstock market indices — 股市指数\n注意：indexes 也是合法复数，但学术/技术圈更常用 indices",cat:"其他"},
-  {en:"trash chute",ph:"/ʃuːt/",zh:"垃圾通道、垃圾滑道",ex:"Throw the bag down the trash chute. — 把袋子扔进垃圾通道\n公寓楼里常见的竖直管道",cat:"其他"},
-  {en:"chute",ph:"/ʃuːt/",zh:"滑道、斜槽",ex:"a laundry chute — 脏衣服滑道\na parachute — 降落伞（para + chute = 防 + 坠落）",cat:"其他"},
+  {en:"trash chute",ph:"/ʃuːt/",zh:"垃圾通道、垃圾滑道",ex:"Throw the bag down the trash chute. — 把袋子扔进垃圾通道\n公寓楼里常见的竖直管道",cat:"其他",img:"images/trash_chute.jpg"},
+  {en:"chute",ph:"/ʃuːt/",zh:"滑道、斜槽",ex:"a laundry chute — 脏衣服滑道\na parachute — 降落伞（para + chute = 防 + 坠落）",cat:"其他",img:"images/chute.jpg"},
   {en:"limelight",ph:"/ˈlaɪmlaɪt/",zh:"聚光灯、公众关注的焦点",ex:"in the limelight — 处于公众关注的焦点\nsteal the limelight — 抢风头",cat:"其他"},
   {en:"steroids",ph:"/ˈstɛrɔɪdz/",zh:"类固醇",ex:"on steroids — 加强版的（口语比喻）\nlike X on steroids — 像吃了药的 X\nanabolic steroids — 合成代谢类固醇",cat:"其他"},
   {en:"big belly",zh:"大肚子",ex:"He's got a big belly from drinking too much beer. — 他喝啤酒喝出了大肚子\nbeer belly — 啤酒肚",cat:"其他"},
@@ -870,26 +874,26 @@ const VOCAB = [
 
   {en:"would have had to + V",zh:"虚拟语气 + 情态动词\n本来必须做某事，但没发生\nmust 没有过去分词，只能借 have to",ex:"He would have had to resign. 他本来就得辞职。\n✅ would have had to\n❌ would have musted",cat:"语法"},
   {en:"insanely",ph:"/ɪnˈseɪnli/",zh:"极其、疯狂地\n口语中常用来加强程度",ex:"insanely good — 好到离谱\ninsanely fast — 快得离谱\nThis is insanely expensive. — 这贵得离谱",cat:"口语"},
-  {en:"flip-flop",ph:"/ˈflɪp flɑːp/",zh:"1. 人字拖、夹脚拖鞋\n2. 突然改变立场、出尔反尔\n3. 触发器（计算机/电子学）",ex:"I wear flip-flops to the beach. — 我穿人字拖去海滩\nPoliticians who flip-flop lose credibility. — 出尔反尔的政客失去公信力\nSR flip-flop — SR 触发器",cat:"多义词"},
-  {en:"pecan",ph:"/pɪˈkɑːn/",zh:"山核桃、碧根果\n北美原产坚果，发音南方 /pɪˈkɑːn/，北方也有 /ˈpiːkæn/",ex:"pecan pie — 山核桃派（经典美式甜点）\nbutter pecan ice cream — 黄油碧根果冰淇淋\na bag of pecans — 一袋碧根果",cat:"其他"},
-  {en:"sirloin",ph:"/ˈsɜːrlɔɪn/",zh:"西冷牛排、牛里脊肉\n牛背部上方的肉，比 rib eye 瘦，比 tenderloin 有嚼劲",ex:"sirloin steak — 西冷牛排\ntop sirloin — 上等西冷\nI'll have the sirloin, medium rare. — 我要西冷，三分熟",cat:"其他"},
-  {en:"coal",ph:"/koʊl/",zh:"煤、煤炭",ex:"coal mine — 煤矿\ncharcoal — 木炭（char + coal）\nhot coals — 炙热的炭火",cat:"其他"},
-  {en:"shoal",ph:"/ʃoʊl/",zh:"1. 浅滩、沙洲\n2. 一大群（鱼）\n注意和 shore（海岸）区分：shoal 是水下的浅处",ex:"The ship ran aground on a shoal. — 船在浅滩搁浅了\na shoal of fish — 一大群鱼\nhidden shoals — 暗礁（也可比喻隐藏的危险）",cat:"其他"},
-  {en:"gown",ph:"/ɡaʊn/",zh:"长袍、礼服\n毕业服/晚礼服/病号服/睡袍都叫 gown",ex:"cap and gown — 学位帽和学位服\nevening gown — 晚礼服\nhospital gown — 病号服\ndressing gown — 睡袍",cat:"其他"},
-  {en:"owl",ph:"/aʊl/",zh:"猫头鹰",ex:"night owl — 夜猫子（熬夜的人）\nwise as an owl — 像猫头鹰一样聪明\nbarn owl — 谷仓猫头鹰",cat:"其他"},
+  {en:"flip-flop",ph:"/ˈflɪp flɑːp/",zh:"1. 人字拖、夹脚拖鞋\n2. 突然改变立场、出尔反尔\n3. 触发器（计算机/电子学）",ex:"I wear flip-flops to the beach. — 我穿人字拖去海滩\nPoliticians who flip-flop lose credibility. — 出尔反尔的政客失去公信力\nSR flip-flop — SR 触发器",cat:"多义词",img:"images/flip_flop.jpg"},
+  {en:"pecan",ph:"/pɪˈkɑːn/",zh:"山核桃、碧根果\n北美原产坚果，发音南方 /pɪˈkɑːn/，北方也有 /ˈpiːkæn/",ex:"pecan pie — 山核桃派（经典美式甜点）\nbutter pecan ice cream — 黄油碧根果冰淇淋\na bag of pecans — 一袋碧根果",cat:"其他",img:"images/pecan.jpg"},
+  {en:"sirloin",ph:"/ˈsɜːrlɔɪn/",zh:"西冷牛排、牛里脊肉\n牛背部上方的肉，比 rib eye 瘦，比 tenderloin 有嚼劲",ex:"sirloin steak — 西冷牛排\ntop sirloin — 上等西冷\nI'll have the sirloin, medium rare. — 我要西冷，三分熟",cat:"其他",img:"images/sirloin.jpg"},
+  {en:"coal",ph:"/koʊl/",zh:"煤、煤炭",ex:"coal mine — 煤矿\ncharcoal — 木炭（char + coal）\nhot coals — 炙热的炭火",cat:"其他",img:"images/coal.jpg"},
+  {en:"shoal",ph:"/ʃoʊl/",zh:"1. 浅滩、沙洲\n2. 一大群（鱼）\n注意和 shore（海岸）区分：shoal 是水下的浅处",ex:"The ship ran aground on a shoal. — 船在浅滩搁浅了\na shoal of fish — 一大群鱼\nhidden shoals — 暗礁（也可比喻隐藏的危险）",cat:"其他",img:"images/shoal.jpg"},
+  {en:"gown",ph:"/ɡaʊn/",zh:"长袍、礼服\n毕业服/晚礼服/病号服/睡袍都叫 gown",ex:"cap and gown — 学位帽和学位服\nevening gown — 晚礼服\nhospital gown — 病号服\ndressing gown — 睡袍",cat:"其他",img:"images/gown.jpg"},
+  {en:"owl",ph:"/aʊl/",zh:"猫头鹰",ex:"night owl — 夜猫子（熬夜的人）\nwise as an owl — 像猫头鹰一样聪明\nbarn owl — 谷仓猫头鹰",cat:"其他",img:"images/owl.jpg"},
   {en:"howl",ph:"/haʊl/",zh:"嚎叫、嚎哭\n狼嚎、风啸、人大哭都用 howl",ex:"wolves howling at the moon — 狼对月嚎叫\nhowl with laughter — 笑到嚎\nthe wind howled — 风呼啸",cat:"其他"},
   {en:"foul",ph:"/faʊl/",zh:"1. 恶臭的、肮脏的\n2. 犯规（体育）\n3. 下流的",ex:"foul smell — 恶臭\npersonal foul — 个人犯规（篮球）\nfoul language — 脏话\nfoul weather — 恶劣天气",cat:"多义词"},
   {en:"moor",ph:"/mʊr/",zh:"1. 荒原、沼泽地\n2. 系泊、停泊（船）\n3. Moor（大写）摩尔人",ex:"the Yorkshire Moors — 约克郡荒原\nmoor a boat to the dock — 把船系在码头\na meteoric rise from the moors — 从荒原崛起",cat:"多义词"},
-  {en:"meteor",ph:"/ˈmiːtiər/",zh:"流星\nmeteor 是天上的光迹，meteorite 是落到地面的陨石",ex:"meteor shower — 流星雨\nmeteoric rise — 迅速崛起（比喻）\na meteor streaked across the sky — 一颗流星划过天空",cat:"其他"},
-  {en:"pilot light",zh:"长明火、引燃火苗\n燃气灶/热水器上持续燃烧的小火苗，用来点燃主火",ex:"The pilot light went out. — 长明火灭了\nrelight the pilot light — 重新点燃引燃火苗",cat:"其他"},
-  {en:"knob",ph:"/nɑːb/",zh:"旋钮、球形把手",ex:"door knob — 门把手\nturn the knob — 转旋钮\nvolume knob — 音量旋钮",cat:"其他"},
+  {en:"meteor",ph:"/ˈmiːtiər/",zh:"流星\nmeteor 是天上的光迹，meteorite 是落到地面的陨石",ex:"meteor shower — 流星雨\nmeteoric rise — 迅速崛起（比喻）\na meteor streaked across the sky — 一颗流星划过天空",cat:"其他",img:"images/meteor.jpg"},
+  {en:"pilot light",zh:"长明火、引燃火苗\n燃气灶/热水器上持续燃烧的小火苗，用来点燃主火",ex:"The pilot light went out. — 长明火灭了\nrelight the pilot light — 重新点燃引燃火苗",cat:"其他",img:"images/pilot_light.jpg"},
+  {en:"knob",ph:"/nɑːb/",zh:"旋钮、球形把手",ex:"door knob — 门把手\nturn the knob — 转旋钮\nvolume knob — 音量旋钮",cat:"其他",img:"images/knob.jpg"},
   {en:"lid",ph:"/lɪd/",zh:"盖子",ex:"pot lid — 锅盖\neyelid — 眼睑（eye + lid）\nblow the lid off — 揭露（比喻揭开盖子）",cat:"其他"},
   {en:"maturity",ph:"/məˈtʃʊrəti/",zh:"1. 成熟、成熟度\n2. 到期（金融）\n形容词：mature",ex:"emotional maturity — 情感成熟\nbond maturity — 债券到期\nmaturity date — 到期日\nreach maturity — 达到成年",cat:"多义词"},
   {en:"jam session",ph:"/ˈdʒæm ˌsɛʃən/",zh:"即兴演奏会\n一群音乐人凑在一起即兴演奏，不提前编排",ex:"Let's jam! — 我们来即兴演一段\na late-night jam session — 深夜即兴演奏会\njam with friends — 和朋友们即兴合奏",cat:"其他"},
   {en:"griddy",ph:"/ˈɡrɪdi/",zh:"一种病毒式传播的舞蹈动作\n全称 Hit the Griddy，由 Allen Davis 创造，通过 TikTok 和 NFL 达阵庆祝走红",ex:"He hit the griddy after scoring. — 他进球后跳了 griddy\nDo the griddy — 跳 griddy 舞",cat:"口语"},
   {en:"voluntary conscious associative",ph:"/ˈvɑːlənteri ˈkɑːnʃəs əˈsoʊʃiətɪv/",zh:"主动有意识的联想（学习方式）\nvoluntary — 主动的、自愿的\nconscious — 有意识的\nassociative — 联想的、关联的",ex:"voluntary conscious associative learning — 主动有意识的联想学习\nassociative memory — 联想记忆",cat:"学术"},
   {en:"orient to",ph:"/ˈɔːrient tuː/",zh:"1. 适应、熟悉（新环境/情况）\n2. 以…为导向、朝向",ex:"It took me a week to orient to the new job. — 我花了一周适应新工作\nThe course is oriented to practical skills. — 这门课以实用技能为导向",cat:"学术"},
-  {en:"gorilla",ph:"/ɡəˈrɪlə/",zh:"大猩猩\n世界上最大的灵长类动物",ex:"a silverback gorilla — 银背大猩猩\n800-pound gorilla — 不可忽视的强大力量\n注意区分 guerrilla（游击队），发音几乎一样",cat:"其他"},
+  {en:"gorilla",ph:"/ɡəˈrɪlə/",zh:"大猩猩\n世界上最大的灵长类动物",ex:"a silverback gorilla — 银背大猩猩\n800-pound gorilla — 不可忽视的强大力量\n注意区分 guerrilla（游击队），发音几乎一样",cat:"其他",img:"images/gorilla.jpg"},
   {en:"intense",ph:"/ɪnˈtɛns/",zh:"强烈的；紧张的；激烈的",ex:"intense heat — 酷热\nintense pressure — 巨大的压力\nHe's a very intense person. — 他是个非常认真严肃的人",cat:"其他"},
   {en:"unsustainable",ph:"/ˌʌnsəˈsteɪnəbl/",zh:"不可持续的\nun（不）+ sustain（维持）+ able（能…的）",ex:"unsustainable growth — 不可持续的增长\nThis pace of work is unsustainable. — 这种工作节奏不可持续",cat:"其他"},
   {en:"pledge allegiance",ph:"/plɛdʒ əˈliːdʒəns/",zh:"宣誓效忠\npledge — 宣誓、承诺\nallegiance — 忠诚、效忠",ex:"Pledge of Allegiance — 美国效忠誓词（学生每天早上对国旗念）\npledge allegiance to a cause — 宣誓忠于某项事业",cat:"社会"},
@@ -903,9 +907,9 @@ const VOCAB = [
   {en:"overhaul",ph:"/ˈoʊvərˌhɔːl/",zh:"彻底检修；全面改革\nover（全面）+ haul（拉、拖）→ 拉出来从头检查",ex:"overhaul the engine — 大修引擎\nThe website needs a complete overhaul. — 网站需要彻底重做",cat:"其他"},
   {en:"punch out",ph:"/pʌntʃ aʊt/",zh:"1. 打卡下班（对应 punch in 上班）\n2. 揍一拳打倒",ex:"I punch out at 5. — 我五点打卡下班\nWhat time did you punch out? — 你几点下的班？\npunch in — 打卡上班",cat:"口语"},
   {en:"pectoral",ph:"/ˈpɛktərəl/",zh:"胸部的；胸肌（简称 pecs）\npectoral muscles = pecs",ex:"pectoral muscles — 胸肌\npectoral fins — 胸鳍\nHe's been working on his pecs. — 他一直在练胸肌",cat:"其他"},
-  {en:"kebab",ph:"/kɪˈbɑːb/",zh:"烤肉串（中东/土耳其食物）\nshish kebab 铁签烤肉串\ndoner kebab 旋转烤肉",ex:"chicken kebab — 鸡肉烤串\nshish kebab — 铁签烤肉串\ndoner kebab — 旋转烤肉（土耳其烤肉）",cat:"其他"},
-  {en:"cactus blossom",ph:"/ˈkæktəs ˈblɑːsəm/",zh:"仙人掌花\ncactus 仙人掌（复数 cacti）\nblossom 花朵；开花",ex:"The cactus blossom only opens at night. — 仙人掌花只在夜间开放\ncactus / cacti — 仙人掌\nblossom 也指蓬勃发展",cat:"其他"},
-  {en:"pickles",ph:"/ˈpɪkəlz/",zh:"腌黄瓜；泡菜\n北美默认指 dill pickle（莳萝腌黄瓜）\nto pickle = 腌渍",ex:"dill pickle — 莳萝腌黄瓜\nin a pickle — 处于困境中（习语）\npickle relish — 腌黄瓜碎（热狗配料）",cat:"其他"},
+  {en:"kebab",ph:"/kɪˈbɑːb/",zh:"烤肉串（中东/土耳其食物）\nshish kebab 铁签烤肉串\ndoner kebab 旋转烤肉",ex:"chicken kebab — 鸡肉烤串\nshish kebab — 铁签烤肉串\ndoner kebab — 旋转烤肉（土耳其烤肉）",cat:"其他",img:"images/kebab.jpg"},
+  {en:"cactus blossom",ph:"/ˈkæktəs ˈblɑːsəm/",zh:"仙人掌花\ncactus 仙人掌（复数 cacti）\nblossom 花朵；开花",ex:"The cactus blossom only opens at night. — 仙人掌花只在夜间开放\ncactus / cacti — 仙人掌\nblossom 也指蓬勃发展",cat:"其他",img:"images/cactus_blossom.jpg"},
+  {en:"pickles",ph:"/ˈpɪkəlz/",zh:"腌黄瓜；泡菜\n北美默认指 dill pickle（莳萝腌黄瓜）\nto pickle = 腌渍",ex:"dill pickle — 莳萝腌黄瓜\nin a pickle — 处于困境中（习语）\npickle relish — 腌黄瓜碎（热狗配料）",cat:"其他",img:"images/pickles.jpg"},
   {en:"delineated",ph:"/dɪˈlɪniˌeɪtɪd/",zh:"描绘的；界定的；勾勒出轮廓的\nde（完全）+ lineate（画线）→ 界定",ex:"The boundaries are clearly delineated. — 边界被清楚地划定\ndelineate responsibilities — 明确职责分工",cat:"其他"},
   {en:"haptic",ph:"/ˈhæptɪk/",zh:"触觉的；与触感相关的\nhaptic feedback 触觉反馈",ex:"haptic feedback — 触觉反馈（手机/手柄震动）\nThe controller has haptic feedback. — 手柄有触觉反馈",cat:"其他"},
   {en:"tactile",ph:"/ˈtæktaɪl/",zh:"触觉的；有触感的\n比 haptic 更日常广泛，haptic 偏科技",ex:"tactile sensation — 触觉感受\ntactile learner — 触觉型学习者\nThe keyboard has a nice tactile feel. — 键盘手感很好",cat:"其他"},
@@ -914,8 +918,8 @@ const VOCAB = [
   {en:"distortion",ph:"/dɪˈstɔːrʃən/",zh:"扭曲；失真；歪曲\n动词 distort",ex:"audio distortion — 音频失真\ncognitive distortion — 认知扭曲（心理学）\ndistortion of facts — 歪曲事实",cat:"其他"},
   {en:"hop",ph:"/hɑːp/",zh:"（网络）跳、跳数\n数据包经过一个路由器/节点算一跳",ex:"hop count — 跳数\nnext hop — 下一跳\nThe packet traversed 5 hops. — 数据包经过了5跳",cat:"网络"},
   {en:"malfunctioning",ph:"/mælˈfʌŋkʃənɪŋ/",zh:"故障的；运转不正常的\nmal（坏）+ functioning（运行）",ex:"a malfunctioning router — 出故障的路由器\nThe device is malfunctioning. — 设备出故障了",cat:"网络"},
-  {en:"geosynchronous orbit",ph:"/ˌdʒiːoʊˈsɪŋkrənəs ˈɔːrbɪt/",zh:"地球同步轨道\n卫星24小时绕一圈，从地面看像固定不动\n高度约 35,786 km",ex:"geostationary orbit（GEO）— 地球静止轨道\n用途：卫星电视、气象、通信\n缺点：延迟高（~600ms 往返）",cat:"网络"},
-  {en:"cellular networks",ph:"/ˈsɛljələr ˈnɛtwɜːrks/",zh:"蜂窝网络（手机移动网络）\n地面分成六边形 cell，每个 cell 有基站",ex:"cell tower — 基站/信号塔\ncellular coverage — 蜂窝网络覆盖\nhandoff / handover — 基站切换",cat:"网络"},
+  {en:"geosynchronous orbit",ph:"/ˌdʒiːoʊˈsɪŋkrənəs ˈɔːrbɪt/",zh:"地球同步轨道\n卫星24小时绕一圈，从地面看像固定不动\n高度约 35,786 km",ex:"geostationary orbit（GEO）— 地球静止轨道\n用途：卫星电视、气象、通信\n缺点：延迟高（~600ms 往返）",cat:"网络",img:"images/geosynchronous_orbit.jpg"},
+  {en:"cellular networks",ph:"/ˈsɛljələr ˈnɛtwɜːrks/",zh:"蜂窝网络（手机移动网络）\n地面分成六边形 cell，每个 cell 有基站",ex:"cell tower — 基站/信号塔\ncellular coverage — 蜂窝网络覆盖\nhandoff / handover — 基站切换",cat:"网络",img:"images/cellular_networks.jpg"},
   {en:"standards bodies",ph:"/ˈstændərdz ˈbɑːdiz/",zh:"标准组织/标准制定机构\nbody 在这里是「机构」不是「身体」",ex:"IEEE — Wi-Fi、以太网标准\nIETF — TCP/IP、HTTP 协议\nW3C — HTML、CSS 标准",cat:"网络"},
   {en:"bidirectional",ph:"/ˌbaɪdəˈrɛkʃənəl/",zh:"双向的\nbi（双）+ directional（方向的）",ex:"bidirectional communication — 双向通信\n对比：simplex 单工 / half-duplex 半双工 / full-duplex 全双工",cat:"网络"},
   {en:"partition",ph:"/pɑːrˈtɪʃən/",zh:"分区；划分；隔断",ex:"disk partition — 磁盘分区\nnetwork partition — 网络分区（CAP 定理的 P）\npartition a room — 把房间隔开",cat:"网络"},
@@ -932,7 +936,7 @@ const VOCAB = [
   {en:"sleeper build",ph:"/ˈsliːpər bɪld/",zh:"穿衣显瘦脱衣有肉\nsleeper = 看着不起眼但实力很强",ex:"He has a sleeper build. — 他穿衣显瘦脱衣有肉\nsleeper car — 外观普通性能爆表的车\nsleeper hit — 意外爆红的作品",cat:"口语"},
   {en:"subsume",ph:"/səbˈsuːm/",zh:"包含；归入；纳入更大范畴\nsub（下）+ sume（拿）→ 收到大的下面\n比 include 更正式，有「吞并」感",ex:"The new dept subsumed three smaller teams. — 新部门吞并了三个小组\nThis category subsumes all the previous ones.",cat:"学术"},
   {en:"tracert",ph:"/treɪsˈraʊt/",zh:"traceroute 的 Windows 版\n追踪数据包到目标的路由路径，显示每一跳（hop）",ex:"tracert google.com（Windows）\ntraceroute google.com（Linux/Mac）\n原理：TTL 递减，减到 0 时路由器回报",cat:"网络"},
-  {en:"flock",ph:"/flɑːk/",zh:"一群（鸟/羊）；蜂拥而至",ex:"a flock of birds — 一群鸟\nPeople flocked to the new restaurant. — 人们蜂拥去新餐厅\nBirds of a feather flock together. — 物以类聚",cat:"其他"},
+  {en:"flock",ph:"/flɑːk/",zh:"一群（鸟/羊）；蜂拥而至",ex:"a flock of birds — 一群鸟\nPeople flocked to the new restaurant. — 人们蜂拥去新餐厅\nBirds of a feather flock together. — 物以类聚",cat:"其他",img:"images/flock.jpg"},
   {en:"nosy",ph:"/ˈnoʊzi/",zh:"爱管闲事的；八卦的\nnose（鼻子）→ 老把鼻子伸到别人事里",ex:"Don't be so nosy. — 别那么八卦\na nosy neighbor — 爱打听的邻居\nmind your own business — 管好你自己的事",cat:"口语"},
   {en:"interpretation",ph:"/ɪnˌtɜːrprɪˈteɪʃən/",zh:"解释；理解；诠释；口译\n动词 interpret",ex:"open to interpretation — 见仁见智\ndata interpretation — 数据解读\ninterpreter — 口译员 / 编程解释器",cat:"学术"},
   {en:"consent",ph:"/kənˈsɛnt/",zh:"同意；许可；知情同意",ex:"informed consent — 知情同意（研究/医疗必须）\ngive consent — 给予同意\nconsent form — 同意书",cat:"学术"},
@@ -975,11 +979,11 @@ const VOCAB = [
   {en:"novice",ph:"/ˈnɑːvɪs/",zh:"新手；初学者\n拉丁语 novus（新的），比 beginner 更正式",ex:"novice user — 新手用户（HCI 常见）\na complete novice — 完全的新手\nnovice programmer — 编程新手",cat:"学术"},
   {en:"audacity",ph:"/ɔːˈdæsəti/",zh:"大胆；放肆；厚颜无耻\n形容词 audacious\n贬义为主，偶尔褒义（勇气）",ex:"the audacity! — 好大的胆子！\nHe had the audacity to ask for a raise. — 他居然敢要求加薪\nThe Audacity of Hope — 无畏的希望（Obama）",cat:"情感"},
   {en:"critical incident",ph:"/ˈkrɪtɪkəl ˈɪnsɪdənt/",zh:"关键事件\nCIT（关键事件技术）：HCI 研究方法",ex:"Critical Incident Technique — 关键事件技术\n收集用户特别好/特别差的体验\ncritical incident response — 重大事件响应",cat:"HCI"},
-  {en:"foraging",ph:"/ˈfɔːrɪdʒɪŋ/",zh:"觅食；搜寻食物\n动词 forage，动物觅食或人翻找食物",ex:"bees foraging for nectar — 蜜蜂采蜜\nforaging for wild mushrooms — 采集野蘑菇\nforaging through the fridge — 在冰箱里翻找吃的",cat:"其他"},
+  {en:"foraging",ph:"/ˈfɔːrɪdʒɪŋ/",zh:"觅食；搜寻食物\n动词 forage，动物觅食或人翻找食物",ex:"bees foraging for nectar — 蜜蜂采蜜\nforaging for wild mushrooms — 采集野蘑菇\nforaging through the fridge — 在冰箱里翻找吃的",cat:"其他",img:"images/foraging.jpg"},
   {en:"payoff",ph:"/ˈpeɪɔːf/",zh:"回报；收益；结果\npay off（动词）：还清/得到回报",ex:"session payoff — 一次会话中的收益\npayoff matrix — 收益矩阵（博弈论）\nThe payoff was worth the effort. — 回报值得付出",cat:"学术"},
   {en:"repeat offender",ph:"/rɪˈpiːt əˈfɛndər/",zh:"惯犯；屡教不改的人\noffender 违法者（offend 冒犯/犯罪）",ex:"repeat offender laws — 累犯法律\nthree strikes law — 三振出局法\n日常引申：总犯同样错误的人",cat:"法律"},
   {en:"impostor",ph:"/ɪmˈpɑːstər/",zh:"冒充者；骗子\n也拼 imposter，两种都对",ex:"impostor syndrome — 冒充者综合征（觉得自己不够格）\nexposed as an impostor — 被揭穿是冒充者\nAmong Us 里的 impostor = 内鬼",cat:"其他"},
-  {en:"soar",ph:"/sɔːr/",zh:"翱翔；猛涨；飙升\n原意鸟翱翔，引申为数字急剧上升\n比 increase/rise 语气强很多",ex:"soaring debt — 飙升的债务\nsoaring prices — 飞涨的物价\nsoaring temperatures — 气温飙升",cat:"其他"},
+  {en:"soar",ph:"/sɔːr/",zh:"翱翔；猛涨；飙升\n原意鸟翱翔，引申为数字急剧上升\n比 increase/rise 语气强很多",ex:"soaring debt — 飙升的债务\nsoaring prices — 飞涨的物价\nsoaring temperatures — 气温飙升",cat:"其他",img:"images/soar.jpg"},
   {en:"out of the box",ph:"",zh:"开箱即用（产品/软件）；跳出框架（创意）\n两个完全不同的意思，看语境",ex:"It works out of the box. — 开箱即用\nout-of-the-box features — 自带功能\nthink outside the box — 跳出思维定势",cat:"口语"},
   {en:"cult",ph:"/kʌlt/",zh:"邪教；狂热崇拜；小众追捧",ex:"cult classic — 小众经典\ncult following — 小众但狂热的粉丝群\ncult leader — 邪教头目",cat:"多义词"},
   {en:"erect",ph:"/ɪˈrɛkt/",zh:"竖立；建造；直立的",ex:"erect a building — 建造一栋楼\nerect a statue — 竖立一座雕像\nstand erect — 笔直站立",cat:"其他"},
@@ -989,8 +993,8 @@ const VOCAB = [
   {en:"bait out",ph:"/beɪt aʊt/",zh:"出卖；曝光；让人丢脸\n英式俚语，年轻人常用",ex:"Don't bait me out! — 别出卖我！\nHe baited me out in front of everyone. — 他当众让我出丑\n类似 snitch on（告密）、expose（曝光）",cat:"口语"},
   {en:"whiff",ph:"/wɪf/",zh:"一阵气味；一丝迹象；挥空没打中\n多义词",ex:"a whiff of perfume — 一阵香水味\na whiff of scandal — 一丝丑闻苗头\nHe whiffed on the pitch. — 挥棒落空（棒球）",cat:"多义词"},
   {en:"truncated",ph:"/ˈtrʌŋkeɪtɪd/",zh:"截断的；被截短的\n动词 truncate / 名词 truncation",ex:"truncated output — 被截断的输出\nThe result was truncated to 50 characters. — 结果被截断到50个字符\ntruncate a string — 截断字符串",cat:"其他"},
-  {en:"palette",ph:"/ˈpælɪt/",zh:"调色板；色彩面板\n也指画家的调色板",ex:"color palette — 调色板\nClick any element and the palette shows up. — 点击元素，调色板就出现了\nThe designer chose a warm palette. — 设计师选了暖色调色板",cat:"其他"},
-  {en:"antenna",ph:"/ænˈtɛnə/",zh:"1. 天线（复数 antennas）\n2. 触角（昆虫，复数 antennae）",ex:"TV antenna — 电视天线\nWi-Fi antenna — Wi-Fi 天线\nThe ant uses its antennae to sense the environment. — 蚂蚁用触角感知环境\nhave an antenna for sth — 对某事很敏感（比喻）",cat:"其他"},
+  {en:"palette",ph:"/ˈpælɪt/",zh:"调色板；色彩面板\n也指画家的调色板",ex:"color palette — 调色板\nClick any element and the palette shows up. — 点击元素，调色板就出现了\nThe designer chose a warm palette. — 设计师选了暖色调色板",cat:"其他",img:"images/palette.jpg"},
+  {en:"antenna",ph:"/ænˈtɛnə/",zh:"1. 天线（复数 antennas）\n2. 触角（昆虫，复数 antennae）",ex:"TV antenna — 电视天线\nWi-Fi antenna — Wi-Fi 天线\nThe ant uses its antennae to sense the environment. — 蚂蚁用触角感知环境\nhave an antenna for sth — 对某事很敏感（比喻）",cat:"其他",img:"images/antenna.jpg"},
   {en:"insult",ph:"/ɪnˈsʌlt/ v. /ˈɪnsʌlt/ n.",zh:"侮辱；冒犯\n动词重音在后，名词重音在前\n形容词 insulting",ex:"Don't insult me. — 别侮辱我\nThat's an insult to my intelligence. — 这是对我智商的侮辱\nadd insult to injury — 雪上加霜",cat:"情感"},
   {en:"ambient light",ph:"/ˈæmbiənt laɪt/",zh:"环境光；自然光线\nambient = 周围的、环绕的",ex:"ambient light sensor — 环境光传感器\nThe room has plenty of ambient light. — 房间自然光很充足\nambient noise — 环境噪音\nambient temperature — 环境温度",cat:"其他"},
   {en:"fraudulent",ph:"/ˈfrɔːdʒələnt/",zh:"欺诈的；骗人的；伪造的\n名词 fraud（诈骗；骗子）",ex:"fraudulent charges — 盗刷的扣款（信用卡）\na fraudulent website — 诈骗网站\ncredit card fraud — 信用卡诈骗\nfraudulent documents — 伪造的文件",cat:"法律"},
@@ -1339,13 +1343,14 @@ function renderCard(w, i) {
   const isKnown = m === 'mastered';
   const zhDisplay = (w.zh||'').replace(/\n/g, '<br>');
   const exDisplay = (w.ex||'').replace(/\n/g, '<br>');
-  return `<div class="card${isKnown?' known':''}" data-idx="${i}" onclick="flipCard(this)">
+  return `<div class="card${isKnown?' known':''}${w.img?' has-img':''}" data-idx="${i}" onclick="flipCard(this)">
     <div class="card-inner">
       <div class="card-face card-front">
         <span class="mastery-badge mastery-${m}">${MASTERY_LABELS[m]}</span>
         <div class="card-cat">${w.cat}</div>
         <div class="card-en">${w.en}</div>
         ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
+        ${w.img?`<img class="card-img" src="${w.img}" alt="" loading="lazy">`:''}
         <button class="speak-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="朗读">${speakIcon}</button>
       </div>
       <div class="card-face card-back">
@@ -1421,6 +1426,7 @@ function renderStudy() {
      <div class="card-cat">${w.cat}</div>
      <div class="card-en">${w.en}</div>
      ${w.ph?`<div class="card-ph">${w.ph}</div>`:''}
+     ${w.img?`<img class="card-img" src="${w.img}" alt="" loading="lazy">`:''}
      <div class="card-hint">点击翻转</div>
      <button class="speak-btn" onclick="speak('${safeEn}',event)" title="朗读">${speakIcon}</button>`;
 
