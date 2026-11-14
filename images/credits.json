@@ -184,5 +184,54 @@
   "src": "https://commons.wikimedia.org/w/index.php?curid=4827589",
   "by": "The original uploader was J.smith at English Wikipedia.",
   "license": "by-sa"
+ },
+ "malasada": {
+  "src": "https://www.flickr.com/photos/70323761@N00/4748152921",
+  "by": "wallyg",
+  "license": "by-nc-nd",
+  "title": "O'ahu - Honolulu: Leonard's Bakery - Malasada",
+  "file": "images/malasada.jpg"
+ },
+ "dough": {
+  "src": "https://www.flickr.com/photos/21001756@N06/3219576544",
+  "by": "Stacy Spensley",
+  "license": "by",
+  "title": "artisan bread dough shaped into boule",
+  "file": "images/dough.jpg"
+ },
+ "airy": {
+  "src": "https://www.flickr.com/photos/48169980@N00/5359635527",
+  "by": "kidmissile",
+  "license": "by-nc-nd",
+  "title": "crumb comparison",
+  "file": "images/airy.jpg"
+ },
+ "custard": {
+  "src": "https://www.flickr.com/photos/69203469@N00/42270525",
+  "by": "yoshimov",
+  "license": "by-nd",
+  "title": "Custard pudding",
+  "file": "images/custard.jpg"
+ },
+ "haupia": {
+  "src": "https://www.flickr.com/photos/51035661423@N01/2229273960",
+  "by": "greggman",
+  "license": "by",
+  "title": "Haupia",
+  "file": "images/haupia.jpg"
+ },
+ "Madeira": {
+  "src": "https://www.flickr.com/photos/24001499@N03/5467987157",
+  "by": "PortoBay Trade",
+  "license": "by-nd",
+  "title": "MADEIRA ISLAND . Porto da Cruz",
+  "file": "images/madeira.jpg"
+ },
+ "Kapahulu": {
+  "src": "https://www.flickr.com/photos/59081381@N03/52143631182",
+  "by": "w_lemay",
+  "license": "by-sa",
+  "title": "Leonard’s Bakery, Kapahulu Avenue, Kaimuki, Honolulu, HI",
+  "file": "images/kapahulu.jpg"
  }
 }
